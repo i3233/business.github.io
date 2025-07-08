@@ -1,0 +1,1978 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>优兑生活</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding-bottom: 50px;
+        }
+
+        /* 顶部导航栏 */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 44px;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        /* 扫码按钮 */
+        .scan-button {
+            width: 32px;
+            height: 32px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .scan-button:hover {
+            transform: scale(1.1);
+        }
+
+        .scan-button img {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* 右侧按钮组 */
+        .right-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 小程序菜单按钮 */
+        .menu-button {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .menu-button::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background: 
+                radial-gradient(circle at 50% 25%, #333 2px, transparent 2px),
+                radial-gradient(circle at 50% 50%, #333 2px, transparent 2px),
+                radial-gradient(circle at 50% 75%, #333 2px, transparent 2px);
+            background-repeat: no-repeat;
+        }
+
+        /* 胶囊按钮 */
+        .capsule-button {
+            width: 32px;
+            height: 32px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+
+        .capsule-button::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #333;
+            border-radius: 50%;
+        }
+
+        /* Banner轮播区 */
+        .banner-container {
+            margin-top: 44px;
+            width: 100%;
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner-wrapper {
+            display: flex;
+            width: 200%;
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .banner-slide {
+            width: 50%;
+            height: 100%;
+            flex-shrink: 0;
+        }
+
+        .banner-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .banner-indicators {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+        }
+
+        .indicator.active {
+            background: #fff;
+        }
+
+        /* 用户信息区域 */
+        .user-info-bar {
+            background: #fff;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            white-space: nowrap;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .register-tag {
+            font-size: 10px;
+            color: #666;
+            background: #f5f5f5;
+            padding: 1px 4px;
+            border-radius: 3px;
+            margin-bottom: 2px;
+            display: inline-block;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .location-search {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: 10px;
+        }
+
+        .location-select {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .location-select select {
+            appearance: none;
+            border: none;
+            background: none;
+            font-size: 13px;
+            color: #333;
+            padding-right: 16px;
+            cursor: pointer;
+        }
+
+        .location-select::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 3px solid transparent;
+            border-right: 3px solid transparent;
+            border-top: 3px solid #666;
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: #f5f5f5;
+            border-radius: 16px;
+            padding: 4px 8px;
+            gap: 4px;
+            flex-shrink: 0;
+            width: 140px;
+        }
+
+        .search-box input {
+            border: none;
+            background: none;
+            outline: none;
+            width: 100%;
+            font-size: 13px;
+        }
+
+        .search-box button {
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .search-box button::before {
+            content: '';
+            width: 14px;
+            height: 14px;
+            background: 
+                radial-gradient(circle at 50% 50%, #666 2px, transparent 2px),
+                linear-gradient(45deg, transparent 5px, #666 5px, #666 7px, transparent 7px);
+            background-repeat: no-repeat;
+        }
+
+        /* 功能入口快捷区 */
+        .quick-access {
+            background: #fff;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .quick-access-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .quick-access-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            padding: 6px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .quick-access-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .quick-access-icon {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quick-access-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .quick-access-text {
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* 邀请用户入口banner */
+        .invite-banner {
+            margin-top: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .invite-text {
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .invite-arrow {
+            width: 20px;
+            height: 20px;
+            position: relative;
+        }
+
+        .invite-arrow::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-top: 2px solid #fff;
+            border-right: 2px solid #fff;
+            transform: translateY(-50%) rotate(45deg);
+        }
+
+        /* 商品展示区 */
+        .product-section {
+            margin-top: 10px;
+            padding: 15px;
+            background: #fff;
+        }
+
+        .product-container {
+            display: flex;
+            gap: 15px;
+        }
+
+        .product-block {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .block-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .product-item {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 120px;
+            background: #f5f5f5;
+            position: relative;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 8px;
+        }
+
+        .product-block:first-child .product-info {
+            padding-bottom: 9px;
+        }
+
+        .product-name {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-price {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+
+        .original-price {
+            font-size: 12px;
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .current-price {
+            font-size: 15px;
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+
+        .points-price {
+            font-size: 12px;
+            color: #ff6b6b;
+        }
+
+        .purchase-count {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .countdown {
+            font-size: 12px;
+            color: #ff6b6b;
+        }
+
+        .countdown span {
+            display: inline-block;
+            background: #ff6b6b;
+            color: #fff;
+            padding: 2px 4px;
+            border-radius: 2px;
+            margin: 0 2px;
+        }
+
+        /* 我的优兑专区 */
+        .my-udui-section {
+            margin-top: 10px;
+            background: #fff;
+            padding: 15px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .view-all {
+            font-size: 13px;
+            color: #666;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .view-all::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-top: 1px solid #666;
+            border-right: 1px solid #666;
+            transform: rotate(45deg);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .feature-button {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 15px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .feature-button-icon {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-button-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .feature-button-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* 商品展示区域 */
+        .product-showcase {
+            margin-top: 10px;
+            background: #fff;
+            padding: 15px;
+        }
+
+        .showcase-container {
+            display: flex;
+            gap: 15px;
+        }
+
+        .showcase-left, .showcase-right {
+            flex: 1;
+            width: 50%;
+            height: 200px;
+        }
+
+        .showcase-left {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .showcase-right {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .right-product {
+            display: flex;
+            height: 100px;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .right-product-image {
+            width: 100px;
+            height: 100px;
+            background: #f5f5f5;
+            flex-shrink: 0;
+        }
+
+        .right-product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .right-product-info {
+            flex: 1;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .right-product-name {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .right-product-price {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .right-product-amount {
+            font-size: 15px;
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+
+        .right-product-original {
+            font-size: 11px;
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .showcase-product {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .showcase-image {
+            width: 100%;
+            height: 100px;
+            background: #f5f5f5;
+            flex-shrink: 0;
+        }
+
+        .showcase-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .showcase-info {
+            flex: 1;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .showcase-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .showcase-tags {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .showcase-tag {
+            font-size: 10px;
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+
+        .showcase-price {
+            margin-top: auto;
+        }
+
+        .showcase-original {
+            font-size: 11px;
+            color: #999;
+            text-decoration: line-through;
+            margin-bottom: 2px;
+        }
+
+        .showcase-current {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+
+        .showcase-amount {
+            font-size: 16px;
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+
+        .showcase-points {
+            font-size: 12px;
+            color: #ff6b6b;
+        }
+
+        .showcase-sales {
+            font-size: 11px;
+            color: #999;
+        }
+
+        /* 下边模块标题样式 */
+        .section-tabs {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #fff;
+            margin-top: 10px;
+        }
+
+        .tab-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .tab-item {
+            font-size: 15px;
+            color: #666;
+            cursor: pointer;
+            position: relative;
+            padding-bottom: 4px;
+        }
+
+        .tab-item.active {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #ff6b6b;
+            border-radius: 1px;
+        }
+
+        .more-link {
+            font-size: 13px;
+            color: #666;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .more-link::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-top: 1px solid #666;
+            border-right: 1px solid #666;
+            transform: rotate(45deg);
+        }
+
+        /* 本地优兑商品网格 */
+        .local-products {
+            background: #fff;
+            padding: 15px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .grid-product {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .grid-product-image {
+            width: 100%;
+            height: 120px;
+            background: #f5f5f5;
+        }
+
+        .grid-product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .grid-product-info {
+            padding: 8px;
+        }
+
+        .grid-product-name {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .grid-product-price {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+
+        .grid-original-price {
+            font-size: 12px;
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .grid-current-price {
+            font-size: 15px;
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+
+        .grid-points-price {
+            font-size: 12px;
+            color: #ff6b6b;
+        }
+
+        .grid-purchase-count {
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* 联营优兑商品组 */
+        .partner-products {
+            background: #fff;
+            padding: 15px;
+        }
+
+        .product-pair {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .pair-product {
+            flex: 1;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .pair-product-image {
+            width: 100%;
+            height: 100px;
+            background: #f5f5f5;
+        }
+
+        .pair-product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .pair-product-info {
+            padding: 8px;
+        }
+
+        .pair-product-name {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pair-product-price {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .pair-original-price {
+            font-size: 12px;
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .pair-current-price {
+            font-size: 15px;
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+
+        .pair-relation {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 0 5px;
+        }
+
+        .relation-arrow {
+            width: 20px;
+            height: 20px;
+            position: relative;
+        }
+
+        .relation-arrow::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 8px;
+            height: 8px;
+            border-top: 2px solid #ff6b6b;
+            border-right: 2px solid #ff6b6b;
+            transform: translateY(-50%) rotate(45deg);
+        }
+
+        .relation-tag {
+            font-size: 12px;
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .relation-desc {
+            font-size: 11px;
+            color: #666;
+            text-align: center;
+            max-width: 60px;
+        }
+
+        /* 底部导航栏 */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #fff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -1px 2px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 10px;
+            padding: 4px 0;
+        }
+
+        .tab-item.active {
+            color: #ff6b6b;
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* 弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 300px;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .modal-message {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .modal-button {
+            background-color: #ff6b6b;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close::before,
+        .modal-close::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 2px;
+            background-color: #999;
+            transform: rotate(45deg);
+        }
+
+        .modal-close::after {
+            transform: rotate(-45deg);
+        }
+
+        .tab-switch {
+            display: flex;
+            gap: 10px;
+        }
+        .tab-btn {
+            padding: 6px 18px;
+            border: none;
+            background: #f5f5f5;
+            color: #333;
+            border-radius: 20px 20px 0 0;
+            font-size: 15px;
+            cursor: pointer;
+            outline: none;
+            transition: background 0.2s, color 0.2s;
+        }
+        .tab-btn.active {
+            background: #ff6b6b;
+            color: #fff;
+        }
+        .tab-content {
+            border-radius: 0 0 8px 8px;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 15px 0 0 0;
+        }
+        .card-style {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        /* 分享弹窗样式 */
+        .share-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .share-modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 320px;
+            text-align: center;
+            position: relative;
+        }
+
+        .share-modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .share-modal-message {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .share-modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .share-modal-close::before,
+        .share-modal-close::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 2px;
+            background-color: #999;
+            transform: rotate(45deg);
+        }
+
+        .share-modal-close::after {
+            transform: rotate(-45deg);
+        }
+
+        /* 金刚区样式 */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            padding: 15px;
+            background: #fff;
+            margin-bottom: 10px;
+        }
+
+        .quick-action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+        }
+
+        .quick-action-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f5f5f5;
+            padding: 8px;
+        }
+
+        .quick-action-item span {
+            font-size: 12px;
+            color: #333;
+        }
+
+        /* 悬浮购物车按钮 */
+        .floating-cart {
+            position: fixed;
+            right: 20px;
+            bottom: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            z-index: 1000;
+        }
+
+        .floating-cart-icon {
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+        }
+
+        .floating-cart:hover .floating-cart-icon {
+            transform: scale(1.1);
+        }
+
+        .floating-cart img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .floating-cart-text {
+            font-size: 12px;
+            color: #333;
+            background: #fff;
+            padding: 2px 8px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* 新增：横向滚动商品列表样式 */
+        .horizontal-scroll-list {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            padding-bottom: 8px;
+            scroll-snap-type: x mandatory;
+        }
+        .horizontal-scroll-list::-webkit-scrollbar {
+            display: none;
+        }
+        .horizontal-product-item {
+            min-width: 120px;
+            max-width: 120px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow: hidden;
+            flex-shrink: 0;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+        }
+        .horizontal-product-image {
+            width: 100%;
+            height: 80px;
+            background: #f5f5f5;
+        }
+        .horizontal-product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .horizontal-product-info {
+            padding: 6px 8px 8px 8px;
+        }
+        .horizontal-product-name {
+            font-size: 12px;
+            color: #333;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .horizontal-product-price {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+        .horizontal-original-price {
+            font-size: 11px;
+            color: #999;
+            text-decoration: line-through;
+        }
+        .horizontal-current-price {
+            font-size: 13px;
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+        .horizontal-points-price {
+            font-size: 11px;
+            color: #ff6b6b;
+        }
+        .horizontal-purchase-count {
+            font-size: 11px;
+            color: #999;
+        }
+        .horizontal-countdown {
+            font-size: 11px;
+            color: #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="nav-bar">
+        <!-- 扫码按钮 -->
+        <div class="scan-button">
+            <img src="data:image/svg+xml;base64,PHN2ZyB0PSIxNjg3NzY5Njg5NTU3IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjQxNzMiIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48cGF0aCBkPSJNMzIwIDMyMGg2NHY2NEgzMjB6IG0xOTIgMGg2NHY2NGgtNjR6IG0xOTIgMGg2NHY2NGgtNjR6TTMyMCA1MTJoNjR2NjRIMzIweiBtMTkyIDBoNjR2NjRoLTY0eiBtMTkyIDBoNjR2NjRoLTY0ek0zMjAgNzA0aDY0djY0SDMyMHogbTE5MiAwaDY0djY0aC02NHogbTE5MiAwaDY0djY0aC02NHoiIGZpbGw9IiMzMzMzMzMiIHAtaWQ9IjQxNzQiPjwvcGF0aD48L3N2Zz4=" alt="扫码">
+        </div>
+        
+        <!-- 右侧按钮组 -->
+        <div class="right-buttons">
+            <!-- 小程序菜单按钮 -->
+            <div class="menu-button"></div>
+            <!-- 胶囊按钮 -->
+            <div class="capsule-button"></div>
+        </div>
+    </div>
+
+    <!-- Banner轮播区 -->
+    <div class="banner-container">
+        <div class="banner-wrapper">
+            <div class="banner-slide">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDQwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjZmY5OTAwIi8+PHRleHQgeD0iNjAwIiB5PSIyMDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNmZmZmZmYiPkJhbm5lciAxPC90ZXh0Pjwvc3ZnPg==" alt="Banner 1">
+            </div>
+            <div class="banner-slide">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDQwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjMDA5OWZmIi8+PHRleHQgeD0iNjAwIiB5PSIyMDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNmZmZmZmYiPkJhbm5lciAyPC90ZXh0Pjwvc3ZnPg==" alt="Banner 2">
+            </div>
+        </div>
+        <div class="banner-indicators">
+            <div class="indicator active"></div>
+            <div class="indicator"></div>
+        </div>
+    </div>
+
+    <!-- 用户信息区域 -->
+    <div class="user-info-bar">
+        <div class="user-profile">
+            <div class="avatar">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM5OTkiLz48L3N2Zz4=" alt="用户头像">
+            </div>
+            <div class="user-details">
+                <span class="register-tag">注册</span>
+                <span class="user-name">HELLO U兑生活</span>
+            </div>
+        </div>
+        <div class="location-search">
+            <div class="location-select">
+                <select>
+                    <option value="chengdu">成都</option>
+                    <option value="beijing">北京</option>
+                </select>
+            </div>
+            <div class="search-box">
+                <input type="text" placeholder="搜索">
+                <button type="button"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 功能入口快捷区 -->
+    <div class="quick-access">
+        <div class="quick-access-grid">
+            <a href="local.html" class="quick-access-item">
+                <div class="quick-access-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgMThjLTQuNDEgMC04LTMuNTktOC04czMuNTktOCA4LTggOCAzLjU5IDggOC0zLjU5IDgtOCA4em0tMS0xM2gtMnY2aDZ2LTJoLTRWN3oiIGZpbGw9IiNmZjY2MDAiLz48L3N2Zz4=" alt="到店抵扣">
+                </div>
+                <span class="quick-access-text">到店抵扣</span>
+            </a>
+            <a href="shop.html" class="quick-access-item">
+                <div class="quick-access-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTIwIDRINGMtMS4xIDAtMS45OS45LTEuOTkgMkwyIDE4YzAgMS4xLjkgMiAyIDJoMTZjMS4xIDAgMi0uOSAyLTJWNmMwLTEuMS0uOS0yLTItMnptLTEgMTRINVY4aDE0djEwem0tOS0zYzAgLjU1LS40NSAxLTEgMXMtMS0uNDUtMS0xdi0yYzAtLjU1LjQ1LTEgMS0xczEgLjQ1IDEgMXYyem0wLTZjMCAuNTUtLjQ1IDEtMSAxcy0xLS40NS0xLTEgLjQ1LTEgMS0xIDEgLjQ1IDEgMXoiIGZpbGw9IiMwMDk5ZmYiLz48L3N2Zz4=" alt="商城抵扣">
+                </div>
+                <span class="quick-access-text">商城抵扣</span>
+            </a>
+            <a href="product-list1.html" class="quick-access-item">
+                <div class="quick-access-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgMThjLTQuNDEgMC04LTMuNTktOC04czMuNTktOCA4LTggOCAzLjU5IDggOC0zLjU5IDgtOCA4em0tMS0xM2gtMnY2aDZ2LTJoLTRWN3oiIGZpbGw9IiNmZjY2MDAiLz48L3N2Zz4=" alt="超值抵扣">
+                </div>
+                <span class="quick-access-text">超值抵扣</span>
+            </a>
+            <a href="product-list2.html" class="quick-access-item">
+                <div class="quick-access-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgMThjLTQuNDEgMC04LTMuNTktOC04czMuNTktOCA4LTggOCAzLjU5IDggOC0zLjU5IDgtOCA4em0tMS0xM2gtMnY2aDZ2LTJoLTRWN3oiIGZpbGw9IiNmZjAwMDAiLz48L3N2Zz4=" alt="爆品抵扣">
+                </div>
+                <span class="quick-access-text">爆品抵扣</span>
+            </a>
+            <a href="free-trial.html" class="quick-access-item">
+                <div class="quick-access-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgMThjLTQuNDEgMC04LTMuNTktOC04czMuNTktOCA4LTggOCAzLjU5IDggOC0zLjU5IDgtOCA4em0tMS0xM2gtMnY2aDZ2LTJoLTRWN3oiIGZpbGw9IiM5OTAwZmYiLz48L3N2Zz4=" alt="抽免单">
+                </div>
+                <span class="quick-access-text">抽免单</span>
+            </a>
+            <!-- 新增分享赚钱入口 -->
+            <a href="share-earn.html" class="quick-access-item">
+                <div class="quick-access-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgMThjLTQuNDEgMC04LTMuNTktOC04czMuNTktOCA4LTggOCAzLjU5IDggOC0zLjU5IDgtOCA4em0tMS0xM2gtMnY2aDZ2LTJoLTRWN3oiIGZpbGw9IiNmZmM1MDAiLz48L3N2Zz4=" alt="分享赚钱">
+                </div>
+                <span class="quick-access-text">分享赚钱</span>
+            </a>
+
+        </div>
+    </div>
+
+    <!-- 邀请用户入口banner -->
+    <div class="invite-banner" onclick="showShareModal()">
+        <span class="invite-text">邀请用户入口</span>
+        <div class="invite-arrow"></div>
+    </div>
+
+    <!-- 分享弹窗 -->
+    <div id="shareModal" class="share-modal">
+        <div class="share-modal-content">
+            <div class="share-modal-close" onclick="closeShareModal()"></div>
+            <div class="share-modal-title">分享</div>
+            <div class="share-modal-message">此处拉起分享链接功能</div>
+        </div>
+    </div>
+
+    <!-- 商品展示区 -->
+    <div class="product-section">
+        <div class="section-header">
+            <div class="tab-switch">
+                <button class="tab-btn active" data-tab="discount">超值抵扣</button>
+                <button class="tab-btn" data-tab="seckill">限时秒杀</button>
+            </div>
+        </div>
+        <div class="tab-content">
+            <!-- 超值抵扣内容区 -->
+            <div class="tab-panel discount-panel" style="display: block;">
+                <div class="horizontal-scroll-list">
+                    <div class="horizontal-product-item">
+                        <a href="local-product.html" style="text-decoration: none; color: inherit;">
+                            <div class="horizontal-product-image">
+                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                            </div>
+                            <div class="horizontal-product-info">
+                                <div class="horizontal-product-name">东北大米 5kg装</div>
+                                <div class="horizontal-product-price">
+                                    <span class="horizontal-original-price">¥99.00</span>
+                                    <span class="horizontal-current-price">¥59.00</span>
+                                    <span class="horizontal-points-price">+200积分</span>
+                                </div>
+                                <div class="horizontal-purchase-count">已购 2.3万份</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="horizontal-product-item">
+                        <a href="local-product.html" style="text-decoration: none; color: inherit;">
+                            <div class="horizontal-product-image">
+                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                            </div>
+                            <div class="horizontal-product-info">
+                                <div class="horizontal-product-name">进口水果礼盒</div>
+                                <div class="horizontal-product-price">
+                                    <span class="horizontal-original-price">¥199.00</span>
+                                    <span class="horizontal-current-price">¥129.00</span>
+                                    <span class="horizontal-points-price">+300积分</span>
+                                </div>
+                                <div class="horizontal-purchase-count">已购 1.5万份</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="horizontal-product-item">
+                        <a href="local-product.html" style="text-decoration: none; color: inherit;">
+                            <div class="horizontal-product-image">
+                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                            </div>
+                            <div class="horizontal-product-info">
+                                <div class="horizontal-product-name">有机牛奶</div>
+                                <div class="horizontal-product-price">
+                                    <span class="horizontal-original-price">¥59.00</span>
+                                    <span class="horizontal-current-price">¥39.00</span>
+                                    <span class="horizontal-points-price">+100积分</span>
+                                </div>
+                                <div class="horizontal-purchase-count">已购 8000份</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="horizontal-product-item">
+                        <a href="local-product.html" style="text-decoration: none; color: inherit;">
+                            <div class="horizontal-product-image">
+                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                            </div>
+                            <div class="horizontal-product-info">
+                                <div class="horizontal-product-name">精品坚果</div>
+                                <div class="horizontal-product-price">
+                                    <span class="horizontal-original-price">¥89.00</span>
+                                    <span class="horizontal-current-price">¥59.00</span>
+                                    <span class="horizontal-points-price">+150积分</span>
+                                </div>
+                                <div class="horizontal-purchase-count">已购 1.2万份</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- 限时秒杀内容区 -->
+            <div class="tab-panel seckill-panel" style="display: none;">
+                <div class="horizontal-scroll-list">
+                    <div class="horizontal-product-item">
+                        <div class="horizontal-product-image">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                        </div>
+                        <div class="horizontal-product-info">
+                            <div class="horizontal-product-name">智能手表</div>
+                            <div class="horizontal-product-price">
+                                <span class="horizontal-original-price">¥599.00</span>
+                                <span class="horizontal-current-price">¥299.00</span>
+                            </div>
+                            <div class="horizontal-countdown">距结束: <span>02</span>:<span>30</span>:<span>45</span></div>
+                        </div>
+                    </div>
+                    <div class="horizontal-product-item">
+                        <div class="horizontal-product-image">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                        </div>
+                        <div class="horizontal-product-info">
+                            <div class="horizontal-product-name">无线蓝牙耳机</div>
+                            <div class="horizontal-product-price">
+                                <span class="horizontal-original-price">¥399.00</span>
+                                <span class="horizontal-current-price">¥199.00</span>
+                            </div>
+                            <div class="horizontal-countdown">距结束: <span>01</span>:<span>45</span>:<span>30</span></div>
+                        </div>
+                    </div>
+                    <div class="horizontal-product-item">
+                        <div class="horizontal-product-image">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                        </div>
+                        <div class="horizontal-product-info">
+                            <div class="horizontal-product-name">高端电饭煲</div>
+                            <div class="horizontal-product-price">
+                                <span class="horizontal-original-price">¥899.00</span>
+                                <span class="horizontal-current-price">¥499.00</span>
+                            </div>
+                            <div class="horizontal-countdown">距结束: <span>00</span>:<span>59</span>:<span>10</span></div>
+                        </div>
+                    </div>
+                    <div class="horizontal-product-item">
+                        <div class="horizontal-product-image">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                        </div>
+                        <div class="horizontal-product-info">
+                            <div class="horizontal-product-name">家用破壁机</div>
+                            <div class="horizontal-product-price">
+                                <span class="horizontal-original-price">¥699.00</span>
+                                <span class="horizontal-current-price">¥399.00</span>
+                            </div>
+                            <div class="horizontal-countdown">距结束: <span>00</span>:<span>30</span>:<span>00</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ 
+    <div class="my-udui-section">
+        <div class="section-header">
+            <div class="section-title">猜你喜欢</div>
+            <a href="product-list3.html" class="view-all">查看全部</a>
+        </div>
+     <!-- 我的优兑专区       
+        <div class="button-group">
+            <a href="javascript:void(0)" class="feature-button" onclick="showPointsModal()">
+                <div class="feature-button-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgMThjLTQuNDEgMC04LTMuNTktOC04czMuNTktOCA4LTggOCAzLjU5IDggOC0zLjU5IDgtOCA4em0tMS0xM2gtMnY2aDZ2LTJoLTRWN3oiIGZpbGw9IiNmZjY2MDAiLz48L3N2Zz4=" alt="平台积分">
+                </div>
+                <span class="feature-button-text">平台积分</span>
+            </a>
+            <a href="javascript:void(0)" class="feature-button" onclick="showCouponModal()">
+                <div class="feature-button-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTIwIDRINGMtMS4xIDAtMS45OS45LTEuOTkgMkwyIDE4YzAgMS4xLjkgMiAyIDJoMTZjMS4xIDAgMi0uOSAyLTJWNmMwLTEuMS0uOS0yLTItMnptLTEgMTRINVY4aDE0djEwem0tOS0zYzAgLjU1LS40NSAxLTEgMXMtMS0uNDUtMS0xdi0yYzAtLjU1LjQ1LTEgMS0xczEgLjQ1IDEgMXYyem0wLTZjMCAuNTUtLjQ1IDEtMSAxcy0xLS40NS0xLTEgLjQ1LTEgMS0xIDEgLjQ1IDEgMXoiIGZpbGw9IiMwMDk5ZmYiLz48L3N2Zz4=" alt="店铺优惠券">
+                </div>
+                <span class="feature-button-text">店铺优惠券</span>
+            </a>
+        </div>
+    </div>
+
+    
+    <div id="pointsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('pointsModal')"></div>
+            <div class="modal-title">积分提醒</div>
+            <div class="modal-message">恭喜你获得今日积分10分</div>
+            <button class="modal-button" onclick="closeModal('pointsModal')">确定</button>
+        </div>
+    </div>
+
+   
+    <div id="couponModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('couponModal')"></div>
+            <div class="modal-title">优惠券提醒</div>
+            <div class="modal-message">恭喜你获得今日优惠券，小肥羊火锅店7折优惠券</div>
+            <a href="local.html" class="modal-button">立即使用</a>
+        </div>
+    </div>
+-->
+    <!-- 商品展示区域 -->
+    <div class="product-showcase">
+        <div class="showcase-container">
+            <div class="showcase-left">
+                <div class="showcase-product">
+                    <div class="showcase-image">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                    </div>
+                    <div class="showcase-info">
+                        <div class="showcase-name">2024春季连衣裙 气质显瘦 收腰设计</div>
+                        <div class="showcase-tags">
+                            <span class="showcase-tag">积分大促</span>
+                            <span class="showcase-tag">新人礼</span>
+                            <span class="showcase-tag">限时折扣</span>
+                        </div>
+                        <div class="showcase-price">
+                            <div class="showcase-original">¥299.00</div>
+                            <div class="showcase-current">
+                                <span class="showcase-amount">¥199.00</span>
+                                <span class="showcase-points">+300积分</span>
+                            </div>
+                            <div class="showcase-sales">已售 2.3万件</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="showcase-right">
+                <div class="right-product">
+                    <div class="right-product-image">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                    </div>
+                    <div class="right-product-info">
+                        <div class="right-product-name">休闲运动鞋</div>
+                        <div class="right-product-price">
+                            <span class="right-product-amount">¥299.00</span>
+                            <span class="right-product-original">¥399.00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-product">
+                    <div class="right-product-image">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                    </div>
+                    <div class="right-product-info">
+                        <div class="right-product-name">智能手表 </div>
+                        <div class="right-product-price">
+                            <span class="right-product-amount">¥599.00</span>
+                            <span class="right-product-original">¥799.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 下边模块 -->
+    <div class="section-tabs">
+        <div class="tab-group">
+            <div class="tab-item active">本地优兑</div>
+            <div class="tab-item">联营优兑</div>
+        </div>
+        <a href="more-products.html" class="more-link">查看更多</a>
+    </div>
+
+    <!-- 本地优兑商品展示 -->
+    <div class="local-products">
+        <div class="product-grid">
+            <div class="grid-product">
+                <a href="local-product.html" style="text-decoration: none; color: inherit;">
+                    <div class="grid-product-image">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                    </div>
+                    <div class="grid-product-info">
+                        <div class="grid-product-name">东北大米 5kg装</div>
+                        <div class="grid-product-price">
+                            <span class="grid-original-price">¥99.00</span>
+                            <span class="grid-current-price">¥59.00</span>
+                            <span class="grid-points-price">+200积分</span>
+                        </div>
+                        <div class="grid-purchase-count">已购 2.3万份</div>
+                    </div>
+                </a>
+            </div>
+            <div class="grid-product">
+                <div class="grid-product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="grid-product-info">
+                    <div class="grid-product-name">进口水果礼盒</div>
+                    <div class="grid-product-price">
+                        <span class="grid-original-price">¥199.00</span>
+                        <span class="grid-current-price">¥129.00</span>
+                        <span class="grid-points-price">+300积分</span>
+                    </div>
+                    <div class="grid-purchase-count">已购 1.5万份</div>
+                </div>
+            </div>
+            <div class="grid-product">
+                <div class="grid-product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="grid-product-info">
+                    <div class="grid-product-name">智能手表</div>
+                    <div class="grid-product-price">
+                        <span class="grid-original-price">¥599.00</span>
+                        <span class="grid-current-price">¥299.00</span>
+                        <span class="grid-points-price">+500积分</span>
+                    </div>
+                    <div class="grid-purchase-count">已购 8千份</div>
+                </div>
+            </div>
+            <div class="grid-product">
+                <div class="grid-product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="grid-product-info">
+                    <div class="grid-product-name">无线蓝牙耳机</div>
+                    <div class="grid-product-price">
+                        <span class="grid-original-price">¥399.00</span>
+                        <span class="grid-current-price">¥199.00</span>
+                        <span class="grid-points-price">+200积分</span>
+                    </div>
+                    <div class="grid-purchase-count">已购 1.2万份</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 联营优兑商品展示 -->
+    <div class="partner-products" style="display: none;">
+        <div class="product-pair">
+            <div class="pair-product">
+                <div class="pair-product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="pair-product-info">
+                    <div class="pair-product-name">进口红酒 750ml</div>
+                    <div class="pair-product-price">
+                        <span class="pair-original-price">¥299.00</span>
+                        <span class="pair-current-price">¥199.00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="pair-relation">
+                <div class="relation-arrow"></div>
+                <div class="relation-tag">买一送一</div>
+                <div class="relation-desc">限时特惠</div>
+            </div>
+            <div class="pair-product">
+                <div class="pair-product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="pair-product-info">
+                    <div class="pair-product-name">红酒开瓶器套装</div>
+                    <div class="pair-product-price">
+                        <span class="pair-original-price">¥99.00</span>
+                        <span class="pair-current-price">¥0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="product-pair">
+            <div class="pair-product">
+                <div class="pair-product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="pair-product-info">
+                    <div class="pair-product-name">智能手表</div>
+                    <div class="pair-product-price">
+                        <span class="pair-original-price">¥599.00</span>
+                        <span class="pair-current-price">¥399.00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="pair-relation">
+                <div class="relation-arrow"></div>
+                <div class="relation-tag">套装优惠</div>
+                <div class="relation-desc">立减200元</div>
+            </div>
+            <div class="pair-product">
+                <div class="pair-product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="pair-product-info">
+                    <div class="pair-product-name">无线充电器</div>
+                    <div class="pair-product-price">
+                        <span class="pair-original-price">¥199.00</span>
+                        <span class="pair-current-price">¥99.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDIwdi02aDR2Nmg0di04aDNMMTIgMyAyIDIyaDN2LTh6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="首页">
+            </div>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="电商购物">
+            </div>
+            <span>电商购物</span>
+        </a>
+        <a href="local.html" class="tab-item active">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM0YTkwZTIiLz48L3N2Zz4=" alt="本地生活">
+            </div>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="会员中心">
+            </div>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="个人中心">
+            </div>
+            <span>个人中心</span>
+        </a>
+    </div>
+
+
+
+    <!-- 悬浮购物车按钮 -->
+    <a href="cart.html" class="floating-cart">
+        <div class="floating-cart-icon">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="购物车">
+        </div>
+        <span class="floating-cart-text">购物车</span>
+    </a>
+
+    <script>
+        // 轮播功能
+        const wrapper = document.querySelector('.banner-wrapper');
+        const indicators = document.querySelectorAll('.indicator');
+        let currentSlide = 0;
+        const slideCount = 2;
+
+        function goToSlide(index) {
+            wrapper.style.transform = `translateX(-${index * 50}%)`;
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === index);
+            });
+            currentSlide = index;
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slideCount;
+            goToSlide(currentSlide);
+        }
+
+        // 自动轮播
+        setInterval(nextSlide, 3000);
+
+        // 点击指示器切换轮播
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                goToSlide(index);
+            });
+        });
+
+        // 页卡切换功能
+        const tabItems = document.querySelectorAll('.tab-item');
+        const localProducts = document.querySelector('.local-products');
+        const partnerProducts = document.querySelector('.partner-products');
+
+        tabItems.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有标签的active类
+                tabItems.forEach(t => t.classList.remove('active'));
+                // 添加当前标签的active类
+                tab.classList.add('active');
+                
+                // 切换内容显示
+                if (tab.textContent === '本地优兑') {
+                    localProducts.style.display = 'block';
+                    partnerProducts.style.display = 'none';
+                } else {
+                    localProducts.style.display = 'none';
+                    partnerProducts.style.display = 'block';
+                }
+            });
+        });
+
+        // 弹窗功能
+        function showPointsModal() {
+            document.getElementById('pointsModal').style.display = 'flex';
+        }
+
+        function showCouponModal() {
+            document.getElementById('couponModal').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // 点击弹窗外部关闭弹窗
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Tab切换交互
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const panels = document.querySelectorAll('.tab-panel');
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    panels.forEach(panel => panel.style.display = 'none');
+                    document.querySelector('.' + this.dataset.tab + '-panel').style.display = 'block';
+                });
+            });
+        });
+
+        // 分享弹窗功能
+        function showShareModal() {
+            document.getElementById('shareModal').style.display = 'flex';
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').style.display = 'none';
+        }
+
+        // 点击弹窗外部关闭弹窗
+        window.onclick = function(event) {
+            if (event.target.classList.contains('share-modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 

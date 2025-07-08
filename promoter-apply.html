@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>申请成为推广员</title>
+    <link rel="stylesheet" href="promoter-apply.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        /* Tabbar Styles */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #fff;
+            display: flex;
+            box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            text-decoration: none;
+            font-size: 12px;
+        }
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+        }
+        .tab-item.active {
+            color: #ff6b6b;
+        }
+        .tab-item:hover {
+            color: #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部标题栏 -->
+    <header class="header">
+        <button class="back-btn">
+            <i class="ri-arrow-left-s-line"></i>
+        </button>
+        <h1>申请成为推广员</h1>
+    </header>
+
+    <!-- 推广员权益说明 -->
+    <section class="benefits">
+        <div class="benefits-grid">
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="ri-money-dollar-circle-line"></i>
+                </div>
+                <h3>推广赚佣金</h3>
+                <p>每邀请1家商户入驻可得现金奖励</p>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="ri-line-chart-line"></i>
+                </div>
+                <h3>持续收益</h3>
+                <p>商户后续每一笔交易你都有分成</p>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="ri-qr-code-line"></i>
+                </div>
+                <h3>专属推广码</h3>
+                <p>拥有专属二维码，一扫绑定，自动记录关系</p>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <i class="ri-dashboard-line"></i>
+                </div>
+                <h3>专属后台</h3>
+                <p>查看推广效果、佣金收入、提现记录等</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 我的推广码 -->
+    <section class="promo-code">
+        <div class="promo-card">
+            <h2 class="promo-title">我的推广码</h2>
+            <div class="qr-container">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik0zMCAzMGgxNDB2MTQwSDMweiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIiLz48cGF0aCBkPSJNNTAgNTBoMjB2MjBINTB6TTEzMCA1MGgyMHYyMGgtMjB6TTUwIDEzMGgyMHYyMEg1MHpNMTMwIDEzMGgyMHYyMGgtMjB6IiBmaWxsPSIjMDAwIi8+PC9zdmc+" alt="推广码" class="qr-code">
+            </div>
+            <div class="promo-info">
+                <p class="promo-text">扫描上方二维码，成为我的推广商户</p>
+                <div class="promo-buttons">
+                    <button class="copy-btn">
+                        <i class="ri-file-copy-line"></i>
+                        复制推广链接
+                    </button>
+                    <a href="promoter-index.html" class="promo-btn">
+                        <i class="ri-line-chart-line"></i>
+                        我的推广
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 审核进度
+    <section class="progress-section">
+        <div class="progress-card">
+            <div class="progress-steps">
+                <div class="step active">
+                    <div class="step-icon">
+                        <i class="ri-file-list-line"></i>
+                    </div>
+                    <div class="step-text">提交申请</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="ri-shield-check-line"></i>
+                    </div>
+                    <div class="step-text">平台审核</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="ri-check-double-line"></i>
+                    </div>
+                    <div class="step-text">审核通过</div>
+                </div>
+            </div>
+        </div>
+    </section>
+ -->
+    <!-- 用户基本信息
+    <section class="user-info">
+        <div class="info-card">
+            <div class="avatar-section">
+                <img src="https://img1.baidu.com/it/u=3177203332,1299138918&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500" alt="用户头像" class="user-avatar">
+                <div class="user-details">
+                    <h3 class="nickname">用户昵称</h3>
+                </div>
+            </div>
+        </div>
+    </section> -->
+
+    <!-- 申请人信息填写
+    <section class="application-form">
+        <div class="form-card">
+            <div class="form-item">
+                <label>姓名</label>
+                <input type="text" id="name" placeholder="请输入真实姓名" maxlength="10">
+            </div>
+            <div class="form-item">
+                <label>身份证号</label>
+                <input type="text" id="id-number" placeholder="请输入身份证号">
+            </div>
+            <div class="form-item">
+                <label>手机号</label>
+                <input type="tel" id="phone" placeholder="请输入手机号">
+            </div>
+        </div>
+    </section> -->
+
+    <!-- 协议勾选
+    <section class="agreement">
+        <div class="agreement-card">
+            <label class="checkbox-label">
+                <input type="checkbox" id="agreement-checkbox">
+                <span class="checkbox-text">我已阅读并同意</span>
+            </label>
+            <div class="agreement-links">
+                <a href="#" class="agreement-link service-agreement-link">《推广员服务协议》</a>
+                <a href="#" class="agreement-link privacy-policy-link">《隐私政策》</a>
+            </div>
+        </div>
+    </section> -->
+
+    <!-- 提交按钮 
+    <section class="submit-section">
+        <button class="submit-btn" disabled>提交申请</button>
+    </section>-->
+
+    <!-- 协议内容弹窗 
+    <div class="modal" id="agreement-modal">
+        <div class="modal-content">-->
+                    <!-- 协议内容将通过JavaScript动态加载 
+                </div>
+            </div>
+        </div>
+    </div>-->
+
+    <!-- 申请成功弹窗 
+    <div class="modal" id="success-modal">
+        <div class="modal-content">
+            <div class="modal-icon success">
+                <i class="ri-checkbox-circle-line"></i>
+            </div>
+            <h3>申请成功</h3>
+            <p>您现在是平台推广员</p>
+            <button class="modal-btn">前往我的主页</button>
+        </div>
+    </div>-->
+
+    <!-- 审核中弹窗 
+    <div class="modal" id="pending-modal">
+        <div class="modal-content">
+            <div class="modal-icon pending">
+                <i class="ri-time-line"></i>
+            </div>
+            <h3>申请已提交</h3>
+            <p>预计1-2个工作日完成审核，请耐心等待</p>
+            <button class="modal-btn">确定</button>
+        </div>
+    </div>-->
+
+    <!-- Tabbar -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span>商城</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>我的</span>
+        </a>
+    </div>
+
+    <style>
+    /* 全局样式重置 */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: #f5f5f5;
+        color: #333;
+        line-height: 1.5;
+        padding-bottom: 80px;
+    }
+
+    /* 顶部标题栏 */
+    .header {
+        background: white;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .back-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #333;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+    .header h1 {
+        flex: 1;
+        text-align: center;
+        font-size: 1.2rem;
+        margin-right: 2rem;
+    }
+
+    /* 推广员权益说明 */
+    .benefits {
+        padding: 15px;
+    }
+
+    .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .benefit-item {
+        background: white;
+        padding: 15px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .benefit-icon {
+        font-size: 1.8rem;
+        color: #4CAF50;
+        margin-bottom: 8px;
+    }
+
+    .benefit-item h3 {
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    .benefit-item p {
+        font-size: 0.8rem;
+        color: #666;
+        line-height: 1.3;
+    }
+
+    /* 审核进度 */
+    .progress-section {
+        padding: 0 15px;
+        margin-bottom: 15px;
+    }
+
+    .progress-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .progress-steps {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+    }
+
+    .step-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #f5f5f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+        color: #999;
+        font-size: 1.2rem;
+    }
+
+    .step.active .step-icon {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .step-text {
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    .step.active .step-text {
+        color: #4CAF50;
+    }
+
+    .step-line {
+        flex: 1;
+        height: 2px;
+        background: #eee;
+        margin: 0 5px;
+        margin-bottom: 20px;
+    }
+
+    /* 用户基本信息 */
+    .user-info {
+        padding: 0 15px;
+        margin-bottom: 15px;
+    }
+
+    .info-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .avatar-section {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .user-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+    }
+
+    .user-details {
+        flex: 1;
+    }
+
+    .nickname {
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+    }
+
+    .phone {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .bind-phone-btn {
+        width: 100%;
+        padding: 12px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    /* 申请人信息填写 */
+    .application-form {
+        padding: 0 15px;
+        margin-bottom: 15px;
+    }
+
+    .form-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-item {
+        margin-bottom: 20px;
+    }
+
+    .form-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-item label {
+        display: block;
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 8px;
+    }
+
+    .form-item input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        outline: none;
+    }
+
+    .form-item input:focus {
+        border-color: #4CAF50;
+    }
+
+    /* 协议勾选 */
+    .agreement {
+        padding: 0 15px;
+        margin-bottom: 15px;
+    }
+
+    .agreement-card {
+        background: white;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        appearance: none;
+        -webkit-appearance: none;
+        position: relative;
+        cursor: pointer;
+    }
+
+    .checkbox-label input[type="checkbox"]:checked {
+        background: #4CAF50;
+        border-color: #4CAF50;
+    }
+
+    .checkbox-label input[type="checkbox"]:checked::after {
+        content: '✓';
+        position: absolute;
+        color: white;
+        font-size: 14px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .agreement-links {
+        display: flex;
+        gap: 10px;
+    }
+
+    .agreement-link {
+        color: #4CAF50;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+
+    /* 提交按钮 */
+    .submit-section {
+        padding: 0 15px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 15px;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 12px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    .submit-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+
+    /* 弹窗样式 */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal.active {
+        display: flex;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 320px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .modal-title {
+        font-size: 1.2rem;
+        color: #333;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #666;
+        cursor: pointer;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .agreement-content {
+        font-size: 0.9rem;
+        color: #666;
+        line-height: 1.6;
+    }
+
+    .modal-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .modal-icon.success {
+        color: #4CAF50;
+    }
+
+    .modal-icon.pending {
+        color: #FFA500;
+    }
+
+    .modal-content h3 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .modal-content p {
+        color: #666;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .modal-btn {
+        width: 100%;
+        padding: 12px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    /* 响应式适配 */
+    @media (max-width: 360px) {
+        .benefits-grid {
+            gap: 8px;
+        }
+        
+        .benefit-item {
+            padding: 12px;
+        }
+        
+        .benefit-icon {
+            font-size: 1.5rem;
+        }
+        
+        .benefit-item h3 {
+            font-size: 0.85rem;
+        }
+        
+        .benefit-item p {
+            font-size: 0.75rem;
+        }
+        
+        .form-item input {
+            font-size: 0.9rem;
+        }
+        
+        .modal-content {
+            width: 95%;
+        }
+    }
+
+    /* 我的推广码样式 */
+    .promo-code {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .promo-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        text-align: center;
+    }
+
+    .promo-title {
+        font-size: 1.2rem;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .qr-container {
+        width: 200px;
+        height: 200px;
+        margin: 0 auto 20px;
+        padding: 10px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .qr-code {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .promo-info {
+        margin-top: 15px;
+    }
+
+    .promo-text {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+    }
+
+    .promo-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .copy-btn, .promo-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 8px 16px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        text-decoration: none;
+    }
+
+    .copy-btn:hover, .promo-btn:hover {
+        background: #45a049;
+    }
+
+    .copy-btn i, .promo-btn i {
+        font-size: 1.1rem;
+    }
+
+    /* 响应式适配 */
+    @media (max-width: 360px) {
+        .qr-container {
+            width: 180px;
+            height: 180px;
+        }
+        
+        .promo-buttons {
+            flex-direction: column;
+        }
+        
+        .copy-btn, .promo-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    </style>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 获取DOM元素
+        const backBtn = document.querySelector('.back-btn');
+        const bindPhoneBtn = document.querySelector('.bind-phone-btn');
+        const agreementCheckbox = document.querySelector('#agreement-checkbox');
+        const submitBtn = document.querySelector('.submit-btn');
+        const serviceAgreementLink = document.querySelector('.service-agreement-link');
+        const privacyPolicyLink = document.querySelector('.privacy-policy-link');
+        const agreementModal = document.querySelector('#agreement-modal');
+        const successModal = document.querySelector('#success-modal');
+        const pendingModal = document.querySelector('#pending-modal');
+        const closeBtns = document.querySelectorAll('.close-btn');
+        const modalBtns = document.querySelectorAll('.modal-btn');
+        const nameInput = document.querySelector('#name');
+        const idNumberInput = document.querySelector('#id-number');
+        const steps = document.querySelectorAll('.step');
+
+        // 返回按钮点击事件
+        backBtn.addEventListener('click', function() {
+            window.history.back();
+        });
+
+        // 绑定手机号按钮点击事件
+        bindPhoneBtn.addEventListener('click', function() {
+            // TODO: 实现手机号绑定逻辑
+            console.log('绑定手机号');
+        });
+
+        // 协议复选框变化事件
+        agreementCheckbox.addEventListener('change', function() {
+            submitBtn.disabled = !this.checked;
+        });
+
+        // 更新进度条状态
+        function updateProgress(step) {
+            steps.forEach((s, index) => {
+                if (index <= step) {
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
+            });
+        }
+
+        // 提交按钮点击事件
+        submitBtn.addEventListener('click', function() {
+            // 更新进度到审核中
+            updateProgress(1);
+            // 显示审核中弹窗
+            showModal(pendingModal);
+        });
+
+        // 显示协议内容
+        serviceAgreementLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            showAgreementModal('服务协议');
+        });
+
+        privacyPolicyLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            showAgreementModal('隐私政策');
+        });
+
+        // 显示协议弹窗
+        function showAgreementModal(title) {
+            const modalTitle = agreementModal.querySelector('.modal-title');
+            const modalContent = agreementModal.querySelector('.agreement-content');
+            
+            modalTitle.textContent = title;
+            // TODO: 根据标题加载对应的协议内容
+            modalContent.textContent = `这是${title}的内容...`;
+            
+            showModal(agreementModal);
+        }
+
+        // 显示弹窗
+        function showModal(modal) {
+            modal.classList.add('active');
+        }
+
+        // 关闭弹窗
+        function closeModal(modal) {
+            modal.classList.remove('active');
+        }
+
+        // 为所有关闭按钮添加点击事件
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const modal = this.closest('.modal');
+                closeModal(modal);
+            });
+        });
+
+        // 为所有弹窗按钮添加点击事件
+        modalBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const modal = this.closest('.modal');
+                closeModal(modal);
+                // 如果是审核中弹窗的确认按钮，跳转到推广员首页
+                if (modal === pendingModal) {
+                    window.location.href = 'promoter-index.html';
+                }
+            });
+        });
+
+        // 点击弹窗背景关闭弹窗
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal(this);
+                }
+            });
+        });
+
+        // 复制推广链接
+        const copyBtn = document.querySelector('.copy-btn');
+        copyBtn.addEventListener('click', function() {
+            // 这里替换为实际的推广链接
+            const promoLink = 'https://example.com/promo/123456';
+            navigator.clipboard.writeText(promoLink).then(() => {
+                alert('推广链接已复制到剪贴板');
+            });
+        });
+    });
+    </script>
+</body>
+</html> 

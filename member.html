@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会员中心 - 优兑生活</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding-bottom: 50px;
+        }
+
+        /* 会员中心banner */
+        .member-banner {
+            height: 100px;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner-content {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            color: #fff;
+            z-index: 1;
+        }
+
+        .banner-text {
+            flex: 1;
+        }
+
+        .banner-title {
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .banner-desc {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .banner-image {
+            width: 80px;
+            height: 80px;
+            margin-left: 15px;
+        }
+
+        .banner-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .banner-bg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgMThjLTQuNDEgMC04LTMuNTktOC04czMuNTktOCA4LTggOCAzLjU5IDggOC0zLjU5IDgtOCA4eiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjEpIi8+PC9zdmc+') repeat;
+            opacity: 0.1;
+        }
+
+        /* 底部导航栏 */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #fff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -1px 2px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 10px;
+            padding: 4px 0;
+        }
+
+        .tab-item.active {
+            color: #ff6b6b;
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* 积分抵扣模块 */
+        .points-section {
+            background: #fff;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .points-info {
+            flex: 1;
+        }
+
+        .points-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin-bottom: 4px;
+        }
+
+        .points-title {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .points-desc {
+            font-size: 12px;
+            color: #999;
+            line-height: 1.4;
+        }
+
+        .share-button {
+            background: #ff6b6b;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            margin-left: 15px;
+        }
+
+        .share-button:active {
+            opacity: 0.9;
+        }
+
+        /* 首单超值抵扣模块 */
+        .first-order-section {
+            background: #fff;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-title .more {
+            font-size: 12px;
+            color: #999;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title .more::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-top: 1px solid #999;
+            border-right: 1px solid #999;
+            transform: rotate(45deg);
+            margin-left: 4px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .product-card {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 120px;
+            background: #f5f5f5;
+            position: relative;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 10px;
+        }
+
+        .product-name {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-price {
+            display: flex;
+            align-items: baseline;
+            gap: 5px;
+        }
+
+        .current-price {
+            font-size: 16px;
+            font-weight: 500;
+            color: #ff6b6b;
+        }
+
+        .original-price {
+            font-size: 12px;
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .points-info {
+            font-size: 12px;
+            color: #ff6b6b;
+            margin-top: 4px;
+        }
+
+        .purchase-count {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 会员中心banner -->
+    <div class="member-banner">
+        <div class="banner-bg"></div>
+        <div class="banner-content">
+            <div class="banner-text">
+                <div class="banner-title">会员中心</div>
+                <div class="banner-desc">尊享会员特权，畅享品质生活</div>
+            </div>
+            <div class="banner-image">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=" alt="会员图标">
+            </div>
+        </div>
+    </div>
+
+    <!-- 积分抵扣模块 -->
+    <div class="points-section">
+        <div class="points-info">
+            <div class="points-value">20U</div>
+            <div class="points-title">积分抵扣</div>
+            <div class="points-desc">优兑商家抵扣，使用根据商家产品规则</div>
+        </div>
+        <button class="share-button">分享锁粉</button>
+    </div>
+
+    <!-- 首单超值抵扣模块 -->
+    <div class="first-order-section">
+        <div class="section-title">
+            <span>首单超值抵扣</span>
+            <a href="product-list3.html" class="more">更多</a>
+        </div>
+        <div class="product-grid">
+            
+            <div class="product-card"><a href="local-product.html" style="text-decoration: none; color: inherit;">
+                <div class="product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgMThjLTQuNDEgMC04LTMuNTktOC04czMuNTktOCA4LTggOCAzLjU5IDggOC0zLjU5IDgtOCA4eiIgZmlsbD0iI2Y1ZjVmNSIvPjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="product-info">
+                    <div class="product-name">精选商品名称精选商品名称</div>
+                    <div class="product-price">
+                        <span class="current-price">¥99</span>
+                        <span class="original-price">¥199</span>
+                    </div>
+                    <div class="points-info">可用20U积分抵扣</div>
+                    <div class="purchase-count">已售 2.3万+</div></a>
+                </div>
+            
+            </div>
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgMThjLTQuNDEgMC04LTMuNTktOC04czMuNTktOCA4LTggOCAzLjU5IDggOC0zLjU5IDgtOCA4eiIgZmlsbD0iI2Y1ZjVmNSIvPjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="product-info">
+                    <div class="product-name">精选商品名称精选商品名称</div>
+                    <div class="product-price">
+                        <span class="current-price">¥99</span>
+                        <span class="original-price">¥199</span>
+                    </div>
+                    <div class="points-info">可用20U积分抵扣</div>
+                    <div class="purchase-count">已售 2.3万+</div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgMThjLTQuNDEgMC04LTMuNTktOC04czMuNTktOCA4LTggOCAzLjU5IDggOC0zLjU5IDgtOCA4eiIgZmlsbD0iI2Y1ZjVmNSIvPjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="product-info">
+                    <div class="product-name">精选商品名称精选商品名称</div>
+                    <div class="product-price">
+                        <span class="current-price">¥99</span>
+                        <span class="original-price">¥199</span>
+                    </div>
+                    <div class="points-info">可用20U积分抵扣</div>
+                    <div class="purchase-count">已售 2.3万+</div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgMThjLTQuNDEgMC04LTMuNTktOC04czMuNTktOCA4LTggOCAzLjU5IDggOC0zLjU5IDgtOCA4eiIgZmlsbD0iI2Y1ZjVmNSIvPjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="product-info">
+                    <div class="product-name">精选商品名称精选商品名称</div>
+                    <div class="product-price">
+                        <span class="current-price">¥99</span>
+                        <span class="original-price">¥199</span>
+                    </div>
+                    <div class="points-info">可用20U积分抵扣</div>
+                    <div class="purchase-count">已售 2.3万+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDIwdi02aDR2Nmg0di04aDNMMTIgMyAyIDIyaDN2LTh6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="首页">
+            </div>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="电商购物">
+            </div>
+            <span>电商购物</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="本地生活">
+            </div>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="会员中心">
+            </div>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="个人中心">
+            </div>
+            <span>个人中心</span>
+        </a>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的粉丝 - 积分商城</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --light-gray: #f8f9fa;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding-top: 56px;
+        }
+
+        /* 顶部标题栏样式 */
+        .page-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .back-button {
+            font-size: 20px;
+            color: var(--secondary-color);
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        /* 数据概览区样式 */
+        .stats-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .stats-scroll {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .stat-card {
+            min-width: 200px;
+            background: var(--light-gray);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .stat-title {
+            font-size: 14px;
+            color: var(--secondary-color);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* 筛选功能区样式 */
+        .filter-section {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: sticky;
+            top: 56px;
+            z-index: 999;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .search-box input {
+            padding-left: 40px;
+            border-radius: 20px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary-color);
+        }
+
+        .filter-scroll {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .filter-btn {
+            padding: 6px 15px;
+            border-radius: 15px;
+            background: var(--light-gray);
+            color: var(--secondary-color);
+            border: none;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* 粉丝列表区样式 */
+        .fans-section {
+            padding: 15px;
+        }
+
+        .fan-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .fan-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .fan-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            margin-right: 15px;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .fan-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .fan-info {
+            flex: 1;
+        }
+
+        .fan-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .fan-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: var(--warning-color);
+            color: #000;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        .fan-time {
+            font-size: 14px;
+            color: var(--secondary-color);
+            margin-bottom: 8px;
+        }
+
+        .fan-source {
+            font-size: 14px;
+            color: var(--secondary-color);
+            margin-bottom: 8px;
+        }
+
+        .fan-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--secondary-color);
+            margin-bottom: 4px;
+        }
+
+        .stat-number {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .fan-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: var(--light-gray);
+            color: var(--secondary-color);
+            font-size: 12px;
+        }
+
+        /* 空状态样式 */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--secondary-color);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+
+        .empty-state .btn {
+            margin-top: 15px;
+        }
+
+        /* 底部导航栏 */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #fff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -1px 2px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 10px;
+            padding: 4px 0;
+        }
+
+        .tab-item.active {
+            color: #ff6b6b;
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部标题栏 -->
+    <div class="page-header">
+        <i class="bi bi-arrow-left back-button"></i>
+        <h1 class="page-title">我的粉丝</h1>
+    </div>
+
+    <!-- 数据概览区 -->
+    <div class="stats-section">
+        <div class="stats-scroll">
+            <div class="stat-card">
+                <div class="stat-title">粉丝总数</div>
+                <div class="stat-value">128人</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">近7日新增</div>
+                <div class="stat-value">12人</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">总消费金额</div>
+                <div class="stat-value">¥12,580</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">人均消费</div>
+                <div class="stat-value">¥98.28</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">积分抵扣总量</div>
+                <div class="stat-value">2,490分</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 筛选功能区 -->
+    <div class="filter-section">
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control" placeholder="搜索昵称或手机号后4位">
+        </div>
+        <div class="filter-scroll">
+            <button class="filter-btn active">全部</button>
+            <button class="filter-btn">近7天</button>
+            <button class="filter-btn">近30天</button>
+            <button class="filter-btn">自定义</button>
+            <button class="filter-btn">高频用户</button>
+            <button class="filter-btn">高客单用户</button>
+            <button class="filter-btn">老用户</button>
+        </div>
+    </div>
+
+    <!-- 粉丝列表区 -->
+    <div class="fans-section">
+        <!-- 粉丝卡片示例 1 -->
+        <div class="fan-card">
+            <div class="fan-header">
+                <div class="fan-avatar">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=1" alt="用户头像">
+                </div>
+                <div class="fan-info">
+                    <div class="fan-name">
+                        张** <span class="fan-tag">🎉 新客</span>
+                    </div>
+                    <div class="fan-time">于 2024年3月20日 成为粉丝</div>
+                </div>
+            </div>
+            <div class="fan-source">首次消费：双人套餐A（堂食）</div>
+            <div class="fan-stats">
+                <div class="stat-item">
+                    <div class="stat-label">累计消费</div>
+                    <div class="stat-number">¥528.00</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">消费次数</div>
+                    <div class="stat-number">5次</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">最近消费</div>
+                    <div class="stat-number">03-20</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">积分抵扣</div>
+                    <div class="stat-number">280分</div>
+                </div>
+            </div>
+            <div class="fan-tags">
+                <span class="tag">高频</span>
+                <span class="tag">高客单</span>
+            </div>
+        </div>
+
+        <!-- 粉丝卡片示例 2 -->
+        <div class="fan-card">
+            <div class="fan-header">
+                <div class="fan-avatar">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=2" alt="用户头像">
+                </div>
+                <div class="fan-info">
+                    <div class="fan-name">
+                        李** <span class="fan-tag">🎉 新客</span>
+                    </div>
+                    <div class="fan-time">于 2024年3月19日 成为粉丝</div>
+                </div>
+            </div>
+            <div class="fan-source">首次消费：单人套餐B（外卖）</div>
+            <div class="fan-stats">
+                <div class="stat-item">
+                    <div class="stat-label">累计消费</div>
+                    <div class="stat-number">¥328.00</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">消费次数</div>
+                    <div class="stat-number">3次</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">最近消费</div>
+                    <div class="stat-number">03-19</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">积分抵扣</div>
+                    <div class="stat-number">150分</div>
+                </div>
+            </div>
+            <div class="fan-tags">
+                <span class="tag">高客单</span>
+            </div>
+        </div>
+
+        <!-- 粉丝卡片示例 3 -->
+        <div class="fan-card">
+            <div class="fan-header">
+                <div class="fan-avatar">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=3" alt="用户头像">
+                </div>
+                <div class="fan-info">
+                    <div class="fan-name">
+                        王**
+                    </div>
+                    <div class="fan-time">于 2024年2月15日 成为粉丝</div>
+                </div>
+            </div>
+            <div class="fan-source">首次消费：四人套餐C（堂食）</div>
+            <div class="fan-stats">
+                <div class="stat-item">
+                    <div class="stat-label">累计消费</div>
+                    <div class="stat-number">¥1,280.00</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">消费次数</div>
+                    <div class="stat-number">8次</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">最近消费</div>
+                    <div class="stat-number">03-18</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">积分抵扣</div>
+                    <div class="stat-number">680分</div>
+                </div>
+            </div>
+            <div class="fan-tags">
+                <span class="tag">高频</span>
+                <span class="tag">高客单</span>
+                <span class="tag">老用户</span>
+            </div>
+        </div>
+
+        <!-- 粉丝卡片示例 4 -->
+        <div class="fan-card">
+            <div class="fan-header">
+                <div class="fan-avatar">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=4" alt="用户头像">
+                </div>
+                <div class="fan-info">
+                    <div class="fan-name">
+                        赵**
+                    </div>
+                    <div class="fan-time">于 2024年1月20日 成为粉丝</div>
+                </div>
+            </div>
+            <div class="fan-source">首次消费：双人套餐D（堂食）</div>
+            <div class="fan-stats">
+                <div class="stat-item">
+                    <div class="stat-label">累计消费</div>
+                    <div class="stat-number">¥2,580.00</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">消费次数</div>
+                    <div class="stat-number">15次</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">最近消费</div>
+                    <div class="stat-number">03-17</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">积分抵扣</div>
+                    <div class="stat-number">1,280分</div>
+                </div>
+            </div>
+            <div class="fan-tags">
+                <span class="tag">高频</span>
+                <span class="tag">高客单</span>
+                <span class="tag">老用户</span>
+            </div>
+        </div>
+
+        <!-- 粉丝卡片示例 5 -->
+        <div class="fan-card">
+            <div class="fan-header">
+                <div class="fan-avatar">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=5" alt="用户头像">
+                </div>
+                <div class="fan-info">
+                    <div class="fan-name">
+                        陈** <span class="fan-tag">🎉 新客</span>
+                    </div>
+                    <div class="fan-time">于 2024年3月18日 成为粉丝</div>
+                </div>
+            </div>
+            <div class="fan-source">首次消费：单人套餐E（外卖）</div>
+            <div class="fan-stats">
+                <div class="stat-item">
+                    <div class="stat-label">累计消费</div>
+                    <div class="stat-number">¥228.00</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">消费次数</div>
+                    <div class="stat-number">2次</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">最近消费</div>
+                    <div class="stat-number">03-18</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">积分抵扣</div>
+                    <div class="stat-number">100分</div>
+                </div>
+            </div>
+            <div class="fan-tags">
+                <span class="tag">高客单</span>
+            </div>
+        </div>
+
+        <!-- 空状态 -->
+        <div class="empty-state d-none">
+            <i class="bi bi-people"></i>
+            <div>暂无粉丝数据～快去引导用户成为你的粉丝吧！</div>
+            <button class="btn btn-primary">查看引流建议</button>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDIwdi02aDR2Nmg0di04aDNMMTIgMyAyIDIyaDN2LTh6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="首页">
+            </div>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="电商购物">
+            </div>
+            <span>电商购物</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="本地生活">
+            </div>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="会员中心">
+            </div>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="个人中心">
+            </div>
+            <span>个人中心</span>
+        </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 返回按钮点击事件
+        document.querySelector('.back-button').addEventListener('click', function() {
+            window.history.back();
+        });
+
+        // 筛选按钮点击事件
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // 搜索框输入事件
+        const searchInput = document.querySelector('.search-box input');
+        searchInput.addEventListener('input', function() {
+            // 这里添加搜索逻辑
+            console.log('搜索:', this.value);
+        });
+
+        // 模拟滚动加载
+        window.addEventListener('scroll', function() {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+                // 这里添加加载更多逻辑
+                console.log('加载更多');
+            }
+        });
+    </script>
+</body>
+</html> 

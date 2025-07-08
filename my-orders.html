@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的订单 - 本地生活小程序</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+            padding-bottom: 70px;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 5px 0;
+            margin-bottom: 15px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .filter-tab {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            font-size: 12px;
+            color: #666;
+            background: white;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .filter-tab.active {
+            background: #ff6b6b;
+            color: white;
+            border-color: #ff6b6b;
+        }
+
+        /* Time Filter */
+        .time-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .time-option {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            font-size: 12px;
+            color: #666;
+            background: white;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .time-option.active {
+            background: #ff6b6b;
+            color: white;
+            border-color: #ff6b6b;
+        }
+
+        /* Order List */
+        .order-list {
+            background: white;
+        }
+
+        .order-item {
+            padding: 15px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .merchant-name {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .order-status {
+            font-size: 12px;
+            color: #ff6b6b;
+        }
+
+        .order-content {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-name {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .product-desc {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .order-price {
+            font-size: 14px;
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+
+        .original-price {
+            font-size: 12px;
+            color: #999;
+            text-decoration: line-through;
+            margin-right: 5px;
+        }
+
+        .price-detail {
+            font-size: 12px;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        .points-price {
+            color: #ff6b6b;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #f5f5f5;
+        }
+
+        .order-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-button {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            font-size: 12px;
+            color: #666;
+            background: white;
+            cursor: pointer;
+        }
+
+        .action-button.primary {
+            background: #ff6b6b;
+            color: white;
+            border-color: #ff6b6b;
+        }
+
+        /* Order Stats */
+        .order-stats {
+            background: white;
+            padding: 15px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* TabBar */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: white;
+            display: flex;
+            border-top: 1px solid #eee;
+            z-index: 100;
+        }
+
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .tab-item.active {
+            color: #ff6b6b;
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="page-title">我的订单</div>
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="搜索订单号/商家/商品">
+            </div>
+            <div class="filter-tabs">
+                <div class="filter-tab active">全部</div>
+                <div class="filter-tab">待付款</div>
+                <div class="filter-tab">待核销</div>
+                <div class="filter-tab">已完成</div>
+                <div class="filter-tab">已取消</div>
+                <div class="filter-tab">售后</div>
+            </div>
+            <div class="time-filter">
+                <div class="time-option active">全部订单</div>
+                <div class="time-option">过去7天</div>
+                <div class="time-option">过去30天</div>
+                <div class="time-option">自定义时间</div>
+            </div>
+        </div>
+
+        <!-- Order List -->
+        <div class="order-list">
+            <!-- Order Item 1 -->
+            <div class="order-item">
+                <div class="order-header">
+                    <div class="merchant-name">火锅店</div>
+                    <div class="order-status">待核销</div>
+                </div>
+                <div class="order-content">
+                    <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=200" alt="商品图片" class="product-image">
+                    <div class="product-info">
+                        <div class="product-name">牛肉火锅套餐</div>
+                        <div class="product-desc">双人套餐，含锅底、牛肉、配菜</div>
+                        <div class="order-price">
+                            <span class="original-price">¥100.00</span>
+                            ¥80.00 + <span class="points-price">20积分</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-footer">
+                    <div class="order-time">2025-05-09 15:30</div>
+                    <div class="order-actions">
+                        <button class="action-button primary">去核销</button>
+                        <button class="action-button">查看详情</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Item 2 -->
+            <div class="order-item">
+                <div class="order-header">
+                    <div class="merchant-name">理发店</div>
+                    <div class="order-status">已完成</div>
+                </div>
+                <div class="order-content">
+                    <img src="https://images.unsplash.com/photo-1562322140-8baeececf3df?w=200" alt="商品图片" class="product-image">
+                    <div class="product-info">
+                        <div class="product-name">理发服务</div>
+                        <div class="product-desc">精剪造型，含洗吹</div>
+                        <div class="order-price">
+                            <span class="original-price">¥68.00</span>
+                            ¥50.00 + <span class="points-price">10积分</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-footer">
+                    <div class="order-time">2025-05-08 10:00</div>
+                    <div class="order-actions">
+                        <button class="action-button">查看详情</button>
+                        <button class="action-button">重新购买</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Item 3 -->
+            <div class="order-item">
+                <div class="order-header">
+                    <div class="merchant-name">书店</div>
+                    <div class="order-status">已取消</div>
+                </div>
+                <div class="order-content">
+                    <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?w=200" alt="商品图片" class="product-image">
+                    <div class="product-info">
+                        <div class="product-name">编程书籍</div>
+                        <div class="product-desc">JavaScript高级程序设计</div>
+                        <div class="order-price">
+                            <span class="original-price">¥150.00</span>
+                            ¥120.00 + <span class="points-price">15积分</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-footer">
+                    <div class="order-time">2025-05-07 13:45</div>
+                    <div class="order-actions">
+                        <button class="action-button">查看详情</button>
+                        <button class="action-button">重新购买</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Stats -->
+        <div class="order-stats">
+            <div class="stat-item">
+                <div class="stat-value">2</div>
+                <div class="stat-label">待付款</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">1</div>
+                <div class="stat-label">待核销</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">5</div>
+                <div class="stat-label">已完成</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">1</div>
+                <div class="stat-label">已取消</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TabBar -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDIwdi02aDR2Nmg0di04aDNMMTIgMyAyIDIyaDN2LTh6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="首页">
+            </div>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="电商购物">
+            </div>
+            <span>电商购物</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="本地生活">
+            </div>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="会员中心">
+            </div>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="个人中心">
+            </div>
+            <span>个人中心</span>
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter Tabs
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    // 这里可以添加筛选逻辑
+                });
+            });
+
+            // Time Filter
+            const timeOptions = document.querySelectorAll('.time-option');
+            timeOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    timeOptions.forEach(o => o.classList.remove('active'));
+                    option.classList.add('active');
+                    // 这里可以添加时间筛选逻辑
+                });
+            });
+
+            // Search Input
+            const searchInput = document.querySelector('.search-input');
+            searchInput.addEventListener('input', (e) => {
+                // 这里可以添加搜索逻辑
+                console.log('Search:', e.target.value);
+            });
+
+            // Action Buttons
+            const actionButtons = document.querySelectorAll('.action-button');
+            actionButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const action = button.textContent;
+                    console.log('Action:', action);
+                    // 这里可以添加按钮点击逻辑
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

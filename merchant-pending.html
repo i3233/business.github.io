@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商家申请审核中</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.5;
+            padding-bottom: 20px;
+        }
+
+        /* 顶部标题栏 */
+        .header {
+            background: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .header h1 {
+            flex: 1;
+            text-align: center;
+            font-size: 1.2rem;
+            margin-right: 2rem;
+        }
+
+        /* 审核状态卡片 */
+        .status-card {
+            background: white;
+            margin: 15px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .status-icon {
+            font-size: 3rem;
+            color: #FFA500;
+            margin-bottom: 15px;
+        }
+
+        .status-title {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .status-text {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        /* 审核进度 */
+        .progress-section {
+            margin: 15px;
+        }
+
+        .progress-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .progress-steps {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            color: #999;
+            font-size: 1.2rem;
+        }
+
+        .step.active .step-icon {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .step.completed .step-icon {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .step-text {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .step.active .step-text {
+            color: #4CAF50;
+        }
+
+        .step.completed .step-text {
+            color: #4CAF50;
+        }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: #eee;
+            margin: 0 5px;
+            margin-bottom: 20px;
+        }
+
+        .step-line.active {
+            background: #4CAF50;
+        }
+
+        /* 申请信息概览 */
+        .info-section {
+            margin: 15px;
+        }
+
+        .info-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-title {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .info-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        /* 提示信息 */
+        .tips-section {
+            margin: 15px;
+        }
+
+        .tips-card {
+            background: #FFF9E6;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #FFE4B5;
+        }
+
+        .tips-title {
+            color: #FFA500;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tips-list {
+            list-style: none;
+        }
+
+        .tips-item {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .tips-item:before {
+            content: "•";
+            position: absolute;
+            left: 5px;
+            color: #FFA500;
+        }
+
+        /* 联系客服按钮 */
+        .contact-section {
+            margin: 15px;
+        }
+
+        .contact-btn {
+            width: 100%;
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .contact-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 360px) {
+            .progress-steps {
+                flex-wrap: wrap;
+            }
+
+            .step {
+                width: 50%;
+                margin-bottom: 15px;
+            }
+
+            .step-line {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部标题栏 -->
+    <header class="header">
+        <button class="back-btn">
+            <i class="ri-arrow-left-s-line"></i>
+        </button>
+        <h1>商家申请审核中</h1>
+    </header>
+
+    <!-- 审核状态 -->
+    <section class="status-card">
+        <div class="status-icon">
+            <i class="ri-time-line"></i>
+        </div>
+        <h2 class="status-title">申请审核中</h2>
+        <p class="status-text">预计1-2个工作日完成审核，请耐心等待</p>
+    </section>
+
+    <!-- 审核进度 -->
+    <section class="progress-section">
+        <div class="progress-card">
+            <div class="progress-steps">
+                <div class="step completed">
+                    <div class="step-icon">
+                        <i class="ri-file-list-line"></i>
+                    </div>
+                    <div class="step-text">提交申请</div>
+                </div>
+                <div class="step-line active"></div>
+                <div class="step active">
+                    <div class="step-icon">
+                        <i class="ri-shield-check-line"></i>
+                    </div>
+                    <div class="step-text">平台审核</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="ri-check-double-line"></i>
+                    </div>
+                    <div class="step-text">审核通过</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 申请信息概览 -->
+    <section class="info-section">
+        <div class="info-card">
+            <h3 class="info-title">申请信息</h3>
+            <div class="info-item">
+                <span class="info-label">店铺名称</span>
+                <span class="info-value">示例店铺</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">申请人</span>
+                <span class="info-value">张三</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">联系电话</span>
+                <span class="info-value">138****8888</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">申请时间</span>
+                <span class="info-value">2024-03-20 14:30</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 提示信息 -->
+    <section class="tips-section">
+        <div class="tips-card">
+            <h3 class="tips-title">
+                <i class="ri-information-line"></i>
+                温馨提示
+            </h3>
+            <ul class="tips-list">
+                <li class="tips-item">审核期间请保持手机畅通，以便工作人员联系</li>
+                <li class="tips-item">审核通过后，您将收到短信通知</li>
+                <li class="tips-item">如需修改申请信息，请联系客服处理</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 联系客服 -->
+    <section class="contact-section">
+        <button class="contact-btn">
+            <i class="ri-customer-service-2-line"></i>
+            联系客服
+        </button>
+    </section>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 返回按钮点击事件
+        const backBtn = document.querySelector('.back-btn');
+        backBtn.addEventListener('click', function() {
+            window.history.back();
+        });
+
+        // 联系客服按钮点击事件
+        const contactBtn = document.querySelector('.contact-btn');
+        contactBtn.addEventListener('click', function() {
+            // TODO: 实现联系客服逻辑
+            alert('正在为您转接客服...');
+        });
+    });
+    </script>
+</body>
+</html> 

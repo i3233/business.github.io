@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>推广员个人中心</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+    /* 全局样式重置 */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: #f5f5f5;
+        color: #333;
+        line-height: 1.5;
+        padding-bottom: 20px;
+    }
+
+    /* 顶部信息栏 */
+    .profile-header {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .profile-card {
+        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        border-radius: 16px;
+        padding: 20px;
+        color: white;
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        margin-right: 15px;
+    }
+
+    .user-details {
+        flex: 1;
+    }
+
+    .nickname {
+        font-size: 1.4rem;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    .promoter-id {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .today-earnings {
+        text-align: center;
+        padding-top: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .today-earnings .label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin-bottom: 5px;
+    }
+
+    .today-earnings .amount {
+        font-size: 2rem;
+        font-weight: 600;
+    }
+
+    /* 数据概览 */
+    .stats-overview {
+        padding: 0 15px;
+        margin-bottom: 15px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .stat-item {
+        background: white;
+        border-radius: 12px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-icon {
+        font-size: 1.8rem;
+        color: #4CAF50;
+        margin-bottom: 8px;
+    }
+
+    .stat-value {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 4px;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    /* 功能入口 */
+    .feature-list {
+        padding: 0 15px;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        text-decoration: none;
+        color: inherit;
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+    .feature-item:last-child {
+        border-bottom: none;
+    }
+
+    .feature-icon {
+        width: 40px;
+        height: 40px;
+        background: #f8f8f8;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        font-size: 1.4rem;
+        color: #4CAF50;
+    }
+
+    .feature-info {
+        flex: 1;
+    }
+
+    .feature-info h3 {
+        font-size: 1rem;
+        margin-bottom: 4px;
+        color: #333;
+    }
+
+    .feature-info p {
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    .feature-item i.ri-arrow-right-s-line {
+        color: #999;
+        font-size: 1.2rem;
+    }
+
+    /* 弹窗样式 */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal.active {
+        display: flex;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 320px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .modal-title {
+        font-size: 1.2rem;
+        color: #333;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #666;
+        cursor: pointer;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    /* 设置列表样式 */
+    .settings-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .settings-item {
+        display: flex;
+        align-items: center;
+        padding: 15px 0;
+        background: none;
+        border: none;
+        width: 100%;
+        text-align: left;
+        cursor: pointer;
+        color: inherit;
+    }
+
+    .settings-item i:first-child {
+        font-size: 1.4rem;
+        color: #4CAF50;
+        margin-right: 15px;
+    }
+
+    .settings-item span {
+        flex: 1;
+        font-size: 1rem;
+    }
+
+    .settings-item i.ri-arrow-right-s-line {
+        color: #999;
+        font-size: 1.2rem;
+    }
+
+    /* 退出确认弹窗样式 */
+    .confirm-icon {
+        font-size: 3rem;
+        color: #4CAF50;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .confirm-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .cancel-btn, .confirm-btn {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    .cancel-btn {
+        background: #f5f5f5;
+        color: #666;
+    }
+
+    .confirm-btn {
+        background: #4CAF50;
+        color: white;
+    }
+
+    /* 客服弹窗样式 */
+    .service-options {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .service-item {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: inherit;
+        padding: 12px;
+        background: #f8f8f8;
+        border-radius: 8px;
+    }
+
+    .service-item i {
+        font-size: 1.4rem;
+        color: #4CAF50;
+        margin-right: 15px;
+    }
+
+    .service-item span {
+        font-size: 0.9rem;
+    }
+
+    .service-time {
+        margin-top: 20px;
+        text-align: center;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    /* 响应式适配 */
+    @media (max-width: 360px) {
+        .profile-card {
+            padding: 15px;
+        }
+
+        .avatar {
+            width: 60px;
+            height: 60px;
+        }
+
+        .nickname {
+            font-size: 1.2rem;
+        }
+
+        .today-earnings .amount {
+            font-size: 1.8rem;
+        }
+
+        .stats-grid {
+            gap: 8px;
+        }
+
+        .stat-item {
+            padding: 12px;
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+        }
+
+        .feature-item {
+            padding: 15px;
+        }
+
+        .feature-icon {
+            width: 35px;
+            height: 35px;
+            font-size: 1.2rem;
+        }
+    }
+
+    /* 底部导航栏 */
+    .tabbar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+        background: #fff;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        box-shadow: 0 -1px 2px rgba(0,0,0,0.1);
+        z-index: 1000;
+    }
+
+    .tab-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: #666;
+        font-size: 10px;
+        padding: 4px 0;
+    }
+
+    .tab-item.active {
+        color: #ff6b6b;
+    }
+
+    .tab-icon {
+        width: 24px;
+        height: 24px;
+        margin-bottom: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .tab-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+    </style>
+</head>
+<body>
+    <!-- 顶部信息栏 -->
+    <section class="profile-header">
+        <div class="profile-card">
+            <div class="user-info">
+                <img src="https://img2.baidu.com/it/u=1070031807,930348531&fm=253&fmt=auto&app=120&f=PNG?w=500&h=500" alt="用户头像" class="avatar">
+                <div class="user-details">
+                    <h2 class="nickname">微信用户</h2>
+                    <p class="promoter-id">ID123456</p>
+                </div>
+            </div>
+            <div class="today-earnings">
+                <p class="label">今日预估收益</p>
+                <p class="amount">¥23.50</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 数据概览 -->
+    <section class="stats-overview">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="ri-money-dollar-circle-line"></i>
+                </div>
+                <div class="stat-info">
+                    <p class="stat-value">¥1,234.56</p>
+                    <p class="stat-label">累计收益</p>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="ri-store-2-line"></i>
+                </div>
+                <div class="stat-info">
+                    <p class="stat-value">12</p>
+                    <p class="stat-label">已绑定商户数</p>
+                </div>
+            </div>
+ 
+        </div>
+    </section>
+
+    <!-- 功能入口 -->
+    <section class="feature-list">
+        <div class="feature-card">
+            <a href="withdraw.html" class="feature-item">
+                <div class="feature-icon">
+                    <i class="ri-money-dollar-box-line"></i>
+                </div>
+                <div class="feature-info">
+                    <h3>佣金提现</h3>
+                    <p>查看可提现金额并发起提现</p>
+                </div>
+                <i class="ri-arrow-right-s-line"></i>
+            </a>
+            <a href="promotion-records.html" class="feature-item">
+                <div class="feature-icon">
+                    <i class="ri-file-list-line"></i>
+                </div>
+                <div class="feature-info">
+                    <h3>推广记录</h3>
+                    <p>查看成功推广的商户和分成订单明细</p>
+                </div>
+                <i class="ri-arrow-right-s-line"></i>
+            </a>
+            <a href="#" class="feature-item" id="settingsBtn">
+                <div class="feature-icon">
+                    <i class="ri-settings-3-line"></i>
+                </div>
+                <div class="feature-info">
+                    <h3>设置</h3>
+                    <p>修改头像、退出登录、联系客服等</p>
+                </div>
+                <i class="ri-arrow-right-s-line"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- 设置弹窗 -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">设置</h3>
+                <button class="close-btn">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-list">
+                    <button class="settings-item" id="changeAvatarBtn">
+                        <i class="ri-user-avatar-line"></i>
+                        <span>修改头像</span>
+                        <i class="ri-arrow-right-s-line"></i>
+                    </button>
+                    <button class="settings-item" id="contactServiceBtn">
+                        <i class="ri-customer-service-2-line"></i>
+                        <span>联系客服</span>
+                        <i class="ri-arrow-right-s-line"></i>
+                    </button>
+                    <button class="settings-item" id="logoutBtn">
+                        <i class="ri-logout-box-line"></i>
+                        <span>退出登录</span>
+                        <i class="ri-arrow-right-s-line"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 退出登录确认弹窗 -->
+    <div class="modal" id="logoutConfirmModal">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="confirm-icon">
+                    <i class="ri-logout-box-line"></i>
+                </div>
+                <h3>确认退出登录？</h3>
+                <p>退出后需要重新登录才能使用推广功能</p>
+                <div class="confirm-buttons">
+                    <button class="cancel-btn">取消</button>
+                    <button class="confirm-btn">确认退出</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 客服弹窗 -->
+    <div class="modal" id="serviceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">联系客服</h3>
+                <button class="close-btn">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="service-options">
+                    <a href="tel:400-123-4567" class="service-item">
+                        <i class="ri-phone-line"></i>
+                        <span>电话咨询：400-123-4567</span>
+                    </a>
+                    <a href="https://wpa.qq.com/msgrd?v=3&uin=123456789&site=qq&menu=yes" class="service-item">
+                        <i class="ri-qq-line"></i>
+                        <span>QQ客服：123456789</span>
+                    </a>
+                    <a href="weixin://" class="service-item">
+                        <i class="ri-wechat-line"></i>
+                        <span>微信客服：promoter_service</span>
+                    </a>
+                </div>
+                <div class="service-time">
+                    <p>服务时间：周一至周日 9:00-21:00</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 获取DOM元素
+        const settingsBtn = document.querySelector('#settingsBtn');
+        const settingsModal = document.querySelector('#settingsModal');
+        const logoutConfirmModal = document.querySelector('#logoutConfirmModal');
+        const serviceModal = document.querySelector('#serviceModal');
+        const closeBtns = document.querySelectorAll('.close-btn');
+        const changeAvatarBtn = document.querySelector('#changeAvatarBtn');
+        const contactServiceBtn = document.querySelector('#contactServiceBtn');
+        const logoutBtn = document.querySelector('#logoutBtn');
+        const cancelBtn = document.querySelector('.cancel-btn');
+        const confirmBtn = document.querySelector('.confirm-btn');
+
+        // 显示设置弹窗
+        settingsBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showModal(settingsModal);
+        });
+
+        // 显示客服弹窗
+        contactServiceBtn.addEventListener('click', function() {
+            closeModal(settingsModal);
+            showModal(serviceModal);
+        });
+
+        // 显示退出确认弹窗
+        logoutBtn.addEventListener('click', function() {
+            closeModal(settingsModal);
+            showModal(logoutConfirmModal);
+        });
+
+        // 取消退出
+        cancelBtn.addEventListener('click', function() {
+            closeModal(logoutConfirmModal);
+        });
+
+        // 确认退出
+        confirmBtn.addEventListener('click', function() {
+            // TODO: 实现退出登录逻辑
+            console.log('退出登录');
+            // 模拟退出后跳转
+            window.location.href = 'login.html';
+        });
+
+        // 修改头像
+        changeAvatarBtn.addEventListener('click', function() {
+            // TODO: 实现修改头像逻辑
+            console.log('修改头像');
+        });
+
+        // 关闭按钮点击事件
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const modal = this.closest('.modal');
+                closeModal(modal);
+            });
+        });
+
+        // 点击弹窗外部关闭弹窗
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal(this);
+                }
+            });
+        });
+
+        // 显示弹窗
+        function showModal(modal) {
+            modal.classList.add('active');
+        }
+
+        // 关闭弹窗
+        function closeModal(modal) {
+            modal.classList.remove('active');
+        }
+
+        // 获取用户信息
+        function getUserInfo() {
+            // TODO: 从后端获取用户信息
+            // 这里使用模拟数据
+            const userInfo = {
+                avatar: 'https://via.placeholder.com/80',
+                nickname: '微信用户',
+                promoterId: 'ID123456',
+                todayEarnings: '23.50',
+                totalEarnings: '1,234.56',
+                merchantCount: '12',
+                orderCount: '89'
+            };
+
+            // 更新页面数据
+            document.querySelector('.avatar').src = userInfo.avatar;
+            document.querySelector('.nickname').textContent = userInfo.nickname;
+            document.querySelector('.promoter-id').textContent = userInfo.promoterId;
+            document.querySelector('.today-earnings .amount').textContent = `¥${userInfo.todayEarnings}`;
+            document.querySelectorAll('.stat-value')[0].textContent = `¥${userInfo.totalEarnings}`;
+            document.querySelectorAll('.stat-value')[1].textContent = userInfo.merchantCount;
+            document.querySelectorAll('.stat-value')[2].textContent = userInfo.orderCount;
+        }
+
+        // 初始化页面数据
+        getUserInfo();
+    });
+    </script>
+
+    <!-- 底部导航栏 -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDIwdi02aDR2Nmg0di04aDNMMTIgMyAyIDIyaDN2LTh6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="首页">
+            </div>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="电商购物">
+            </div>
+            <span>电商购物</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="本地生活">
+            </div>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="会员中心">
+            </div>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="个人中心">
+            </div>
+            <span>个人中心</span>
+        </a>
+    </div>
+</body>
+</html> 

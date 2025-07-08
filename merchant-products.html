@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品管理 - 商家中心</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --light-gray: #f8f9fa;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        /* 顶部功能栏样式 */
+        .top-bar {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .filter-tag {
+            background: var(--light-gray);
+            border-radius: 15px;
+            padding: 5px 12px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filter-tag.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* 商品列表样式 */
+        .product-list {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .product-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .product-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-tags {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+
+        .product-tag {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: var(--light-gray);
+        }
+
+        .product-tag.hot {
+            background: #ffecec;
+            color: #ff4d4f;
+        }
+
+        .product-tag.new {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+
+        .product-tag.sale {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+
+        .product-meta {
+            display: flex;
+            gap: 15px;
+            color: var(--secondary-color);
+            font-size: 14px;
+        }
+
+        .product-price {
+            color: #ff4d4f;
+            font-weight: 500;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 10px;
+            margin-left: 15px;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+
+        .status-badge.on {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+
+        .status-badge.off {
+            background: #fff2e8;
+            color: #fa8c16;
+        }
+
+        /* 分页样式 */
+        .pagination {
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .top-bar {
+                padding: 15px;
+            }
+
+            .input-group {
+                width: 100% !important;
+            }
+
+            .btn-group {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .btn-group .btn {
+                flex: 1;
+            }
+
+            .product-item {
+                flex-wrap: wrap;
+                padding: 10px;
+            }
+
+            .product-image {
+                width: 60px;
+                height: 60px;
+                margin-right: 10px;
+            }
+
+            .product-actions {
+                width: 100%;
+                margin-top: 10px;
+                justify-content: flex-end;
+            }
+
+            .product-meta {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .product-meta span {
+                font-size: 12px;
+            }
+
+            .filter-tags {
+                gap: 5px;
+            }
+
+            .filter-tag {
+                font-size: 12px;
+                padding: 3px 8px;
+            }
+        }
+
+        /* 底部导航栏 */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #fff;
+            display: flex;
+            box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+        }
+
+        .tab-item.active {
+            color: #ff6b6b;
+        }
+
+        .tab-item:hover {
+            color: #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部功能栏 -->
+    <div class="top-bar">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
+            <div class="d-flex flex-column w-100 mb-2 mb-md-0">
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" placeholder="搜索商品名称">
+                    <button class="btn btn-outline-secondary">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+                <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
+                    <i class="bi bi-funnel"></i> 筛选
+                </button>
+            </div>
+            <div class="d-flex flex-column w-100">
+                <div class="btn-group mb-2">
+                    <button class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-up-circle"></i> 批量上架
+                    </button>
+                    <button class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-down-circle"></i> 批量下架
+                    </button>
+                    <button class="btn btn-outline-danger">
+                        <i class="bi bi-trash"></i> 批量删除
+                    </button>
+                </div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newProductModal">
+                    <i class="bi bi-plus-lg"></i> 新增商品
+                </button>
+            </div>
+        </div>
+        <div class="filter-tags">
+            <div class="filter-tag active">
+                <span>全部</span>
+                <i class="bi bi-x"></i>
+            </div>
+            <div class="filter-tag">
+                <span>饮品</span>
+                <i class="bi bi-x"></i>
+            </div>
+            <div class="filter-tag">
+                <span>简餐</span>
+                <i class="bi bi-x"></i>
+            </div>
+            <div class="filter-tag">
+                <span>上架中</span>
+                <i class="bi bi-x"></i>
+            </div>
+            <div class="filter-tag">
+                <span>热销</span>
+                <i class="bi bi-x"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 商品列表 -->
+    <div class="product-list">
+        <div class="product-item">
+            <input type="checkbox" class="form-check-input me-3">
+            <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=200&h=200&fit=crop" class="product-image" alt="双人火锅套餐A">
+            <div class="product-info">
+                <div class="product-name">双人火锅套餐A</div>
+                <div class="product-tags">
+                    <span class="product-tag hot">热销</span>
+                    <span class="product-tag new">新品</span>
+                    <span class="product-tag sale">限时优惠</span>
+                </div>
+                <div class="product-meta">
+                    <span>分类：火锅</span>
+                    <span class="product-price">¥198 + 100积分</span>
+                    <span>库存：50</span>
+                    <span class="status-badge on">上架中</span>
+                    <span>🎁 积分活动</span>
+                    <span>💰 现金折扣</span>
+                </div>
+            </div>
+            <div class="product-actions">
+                <button class="btn btn-outline-primary btn-sm edit-btn" title="编辑" data-bs-toggle="modal" data-bs-target="#editProductModal">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-outline-success btn-sm" title="推送首页">
+                    <i class="bi bi-star"></i>
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" title="下架">
+                    <i class="bi bi-arrow-down-circle"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="product-item">
+            <input type="checkbox" class="form-check-input me-3">
+            <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200&h=200&fit=crop" class="product-image" alt="四人火锅套餐B">
+            <div class="product-info">
+                <div class="product-name">四人火锅套餐B</div>
+                <div class="product-tags">
+                    <span class="product-tag hot">热销</span>
+                </div>
+                <div class="product-meta">
+                    <span>分类：火锅</span>
+                    <span class="product-price">¥298 + 150积分</span>
+                    <span>库存：30</span>
+                    <span class="status-badge off">已下架</span>
+                    <span>🆕 新客奖励</span>
+                </div>
+            </div>
+            <div class="product-actions">
+                <button class="btn btn-outline-primary btn-sm edit-btn" title="编辑" data-bs-toggle="modal" data-bs-target="#editProductModal">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-outline-success btn-sm" title="推送首页">
+                    <i class="bi bi-star"></i>
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" title="上架">
+                    <i class="bi bi-arrow-up-circle"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="product-item">
+            <input type="checkbox" class="form-check-input me-3">
+            <img src="https://images.unsplash.com/photo-1564093497595-593b96d80180?w=200&h=200&fit=crop" class="product-image" alt="招牌奶茶">
+            <div class="product-info">
+                <div class="product-name">招牌奶茶</div>
+                <div class="product-tags">
+                    <span class="product-tag hot">热销</span>
+                    <span class="product-tag new">新品</span>
+                </div>
+                <div class="product-meta">
+                    <span>分类：饮品</span>
+                    <span class="product-price">¥18 + 20积分</span>
+                    <span>库存：100</span>
+                    <span class="status-badge on">上架中</span>
+                    <span>🎁 积分活动</span>
+                </div>
+            </div>
+            <div class="product-actions">
+                <button class="btn btn-outline-primary btn-sm edit-btn" title="编辑" data-bs-toggle="modal" data-bs-target="#editProductModal">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-outline-success btn-sm" title="推送首页">
+                    <i class="bi bi-star"></i>
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" title="下架">
+                    <i class="bi bi-arrow-down-circle"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="product-item">
+            <input type="checkbox" class="form-check-input me-3">
+            <img src="https://images.unsplash.com/photo-1564093497595-593b96d80180?w=200&h=200&fit=crop" class="product-image" alt="水果沙拉">
+            <div class="product-info">
+                <div class="product-name">水果沙拉</div>
+                <div class="product-tags">
+                    <span class="product-tag sale">限时优惠</span>
+                </div>
+                <div class="product-meta">
+                    <span>分类：简餐</span>
+                    <span class="product-price">¥28 + 30积分</span>
+                    <span>库存：20</span>
+                    <span class="status-badge on">上架中</span>
+                    <span>💰 现金折扣</span>
+                </div>
+            </div>
+            <div class="product-actions">
+                <button class="btn btn-outline-primary btn-sm edit-btn" title="编辑" data-bs-toggle="modal" data-bs-target="#editProductModal">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-outline-success btn-sm" title="推送首页">
+                    <i class="bi bi-star"></i>
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" title="下架">
+                    <i class="bi bi-arrow-down-circle"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="product-item">
+            <input type="checkbox" class="form-check-input me-3">
+            <img src="https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=200&h=200&fit=crop" class="product-image" alt="三明治套餐">
+            <div class="product-info">
+                <div class="product-name">三明治套餐</div>
+                <div class="product-tags">
+                    <span class="product-tag new">新品</span>
+                </div>
+                <div class="product-meta">
+                    <span>分类：简餐</span>
+                    <span class="product-price">¥35 + 40积分</span>
+                    <span>库存：15</span>
+                    <span class="status-badge off">已下架</span>
+                    <span>🆕 新客奖励</span>
+                </div>
+            </div>
+            <div class="product-actions">
+                <button class="btn btn-outline-primary btn-sm edit-btn" title="编辑" data-bs-toggle="modal" data-bs-target="#editProductModal">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-outline-success btn-sm" title="推送首页">
+                    <i class="bi bi-star"></i>
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" title="上架">
+                    <i class="bi bi-arrow-up-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分页 -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1">上一页</a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">下一页</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- 筛选弹窗 -->
+    <div class="modal fade" id="filterModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">商品筛选</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">商品分类</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="category1">
+                            <label class="form-check-label" for="category1">饮品</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="category2">
+                            <label class="form-check-label" for="category2">简餐</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="category3">
+                            <label class="form-check-label" for="category3">火锅</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">商品状态</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="status1">
+                            <label class="form-check-label" for="status1">上架中</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="status2">
+                            <label class="form-check-label" for="status2">已下架</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">商品标签</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="tag1">
+                            <label class="form-check-label" for="tag1">热销</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="tag2">
+                            <label class="form-check-label" for="tag2">新品</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="tag3">
+                            <label class="form-check-label" for="tag3">限时优惠</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增商品弹窗 -->
+    <div class="modal fade" id="newProductModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">新增商品</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">商品名称 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" maxlength="20" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">商品分类 <span class="text-danger">*</span></label>
+                                <select class="form-select" required>
+                                    <option value="">请选择分类</option>
+                                    <option value="1">饮品</option>
+                                    <option value="2">简餐</option>
+                                    <option value="3">火锅</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">商品主图 <span class="text-danger">*</span></label>
+                            <div class="d-flex gap-2">
+                                <div class="border rounded p-2 text-center" style="width: 100px; height: 100px;">
+                                    <i class="bi bi-plus-lg"></i>
+                                    <div class="small">上传图片</div>
+                                </div>
+                            </div>
+                            <div class="form-text">建议尺寸1:1，支持最多5张</div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">售价设置</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">¥</span>
+                                    <input type="number" class="form-control" placeholder="现金">
+                                    <span class="input-group-text">+</span>
+                                    <input type="number" class="form-control" placeholder="积分">
+                                    <span class="input-group-text">积分</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">原价</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">¥</span>
+                                    <input type="number" class="form-control" placeholder="原价">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">库存数量</label>
+                                <input type="number" class="form-control" placeholder="不限库存">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">限购设置（可选）</label>
+                                <input type="number" class="form-control" placeholder="每人限购次数">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">商品标签</label>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="tagHot">
+                                    <label class="form-check-label" for="tagHot">热销</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="tagNew">
+                                    <label class="form-check-label" for="tagNew">新品</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="tagSale">
+                                    <label class="form-check-label" for="tagSale">限时优惠</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="tagPromotion">
+                                    <label class="form-check-label" for="tagPromotion">可被带货抽佣</label>
+                                </div>
+                            </div>
+                            <div id="commissionSettings" class="mt-2" style="display: none;">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">基础抽佣比例</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="baseCommission" min="0" max="100" value="15">
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">额外推广奖励</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="extraCommission" min="0" max="100" value="5">
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-text text-muted mt-1">总抽佣比例 = 基础抽佣比例 + 额外推广奖励</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">商品描述</label>
+                            <textarea class="form-control" rows="4" placeholder="请输入商品描述"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="isOnSale">
+                                <label class="form-check-label" for="isOnSale">立即上架</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑商品弹窗 -->
+    <div class="modal fade" id="editProductModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">编辑商品</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">商品名称 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" value="双人火锅套餐A" maxlength="20" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">商品分类 <span class="text-danger">*</span></label>
+                                <select class="form-select" required>
+                                    <option value="3" selected>火锅</option>
+                                    <option value="1">饮品</option>
+                                    <option value="2">简餐</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">商品主图 <span class="text-danger">*</span></label>
+                            <div class="d-flex gap-2">
+                                <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=200&h=200&fit=crop" class="border rounded" style="width: 100px; height: 100px; object-fit: cover;">
+                                <div class="border rounded p-2 text-center" style="width: 100px; height: 100px;">
+                                    <i class="bi bi-plus-lg"></i>
+                                    <div class="small">上传图片</div>
+                                </div>
+                            </div>
+                            <div class="form-text">建议尺寸1:1，支持最多5张</div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">售价设置</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">¥</span>
+                                    <input type="number" class="form-control" value="198" placeholder="现金">
+                                    <span class="input-group-text">+</span>
+                                    <input type="number" class="form-control" value="100" placeholder="积分">
+                                    <span class="input-group-text">积分</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">原价</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">¥</span>
+                                    <input type="number" class="form-control" value="150" placeholder="原价">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">库存数量</label>
+                                <input type="number" class="form-control" value="50" placeholder="不限库存">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">限购设置（可选）</label>
+                                <input type="number" class="form-control" placeholder="每人限购次数">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">商品标签</label>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editTagHot" checked>
+                                    <label class="form-check-label" for="editTagHot">热销</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editTagNew" checked>
+                                    <label class="form-check-label" for="editTagNew">新品</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editTagSale" checked>
+                                    <label class="form-check-label" for="editTagSale">限时优惠</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editTagPromotion">
+                                    <label class="form-check-label" for="editTagPromotion">可被带货抽佣</label>
+                                </div>
+                            </div>
+                            <div id="editCommissionSettings" class="mt-2" style="display: none;">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">基础抽佣比例</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="editBaseCommission" min="0" max="100" value="15">
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">额外推广奖励</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="editExtraCommission" min="0" max="100" value="5">
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-text text-muted mt-1">总抽佣比例 = 基础抽佣比例 + 额外推广奖励</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">商品描述</label>
+                            <textarea class="form-control" rows="4" placeholder="请输入商品描述">双人火锅套餐，包含锅底、肉类、蔬菜等丰富食材，适合2-3人食用。</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="editIsOnSale" checked>
+                                <label class="form-check-label" for="editIsOnSale">商品上架</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabbar -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span>商城</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>我的</span>
+        </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 商品名称复制功能
+        document.querySelectorAll('.product-name').forEach(name => {
+            name.addEventListener('click', function() {
+                navigator.clipboard.writeText(this.textContent).then(() => {
+                    alert('商品名称已复制');
+                });
+            });
+        });
+
+        // 筛选标签点击事件
+        document.querySelectorAll('.filter-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        // 批量操作确认
+        document.querySelector('.btn-outline-danger').addEventListener('click', function() {
+            if (confirm('确定要删除选中的商品吗？此操作不可恢复。')) {
+                // 执行删除操作
+            }
+        });
+
+        // 编辑按钮点击事件
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const productItem = this.closest('.product-item');
+                const productName = productItem.querySelector('.product-name').textContent;
+                const productImage = productItem.querySelector('.product-image').src;
+                const productPrice = productItem.querySelector('.product-price').textContent;
+                const productStock = productItem.querySelector('.product-meta span:nth-child(3)').textContent;
+                
+                // 更新编辑弹窗中的内容
+                const editModal = document.getElementById('editProductModal');
+                editModal.querySelector('input[type="text"]').value = productName;
+                editModal.querySelector('img').src = productImage;
+                
+                // 解析价格
+                const priceMatch = productPrice.match(/¥(\d+)\s*\+\s*(\d+)积分/);
+                if (priceMatch) {
+                    editModal.querySelector('input[placeholder="现金"]').value = priceMatch[1];
+                    editModal.querySelector('input[placeholder="积分"]').value = priceMatch[2];
+                }
+                
+                // 解析库存
+                const stockMatch = productStock.match(/库存：(\d+)/);
+                if (stockMatch) {
+                    editModal.querySelector('input[placeholder="不限库存"]').value = stockMatch[1];
+                }
+                
+                // 更新标签选中状态
+                const tags = productItem.querySelectorAll('.product-tag');
+                editModal.querySelector('#editTagHot').checked = Array.from(tags).some(tag => tag.textContent === '热销');
+                editModal.querySelector('#editTagNew').checked = Array.from(tags).some(tag => tag.textContent === '新品');
+                editModal.querySelector('#editTagSale').checked = Array.from(tags).some(tag => tag.textContent === '限时优惠');
+                
+                // 更新上架状态
+                const statusBadge = productItem.querySelector('.status-badge');
+                editModal.querySelector('#editIsOnSale').checked = statusBadge.classList.contains('on');
+            });
+        });
+
+        // 编辑商品时的价格/库存变更提示
+        const editModal = document.getElementById('editProductModal');
+        const priceInputs = editModal.querySelectorAll('input[type="number"]');
+        priceInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                if (confirm('此项变更将即时生效，是否确认？')) {
+                    // 执行变更
+                } else {
+                    // 恢复原值
+                    this.value = this.defaultValue;
+                }
+            });
+        });
+
+        // 处理抽佣设置显示/隐藏
+        document.getElementById('tagPromotion').addEventListener('change', function() {
+            document.getElementById('commissionSettings').style.display = this.checked ? 'block' : 'none';
+        });
+
+        document.getElementById('editTagPromotion').addEventListener('change', function() {
+            document.getElementById('editCommissionSettings').style.display = this.checked ? 'block' : 'none';
+        });
+
+        // 验证抽佣比例输入
+        function validateCommission(input) {
+            const value = parseInt(input.value);
+            if (value < 0) input.value = 0;
+            if (value > 100) input.value = 100;
+        }
+
+        // 为所有抽佣比例输入框添加验证
+        ['baseCommission', 'extraCommission', 'editBaseCommission', 'editExtraCommission'].forEach(id => {
+            document.getElementById(id).addEventListener('input', function() {
+                validateCommission(this);
+            });
+        });
+
+        // 编辑商品时，如果商品有抽佣设置，显示抽佣设置界面
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const productItem = this.closest('.product-item');
+                const hasPromotion = productItem.querySelector('.product-meta').textContent.includes('可被带货抽佣');
+                
+                const editModal = document.getElementById('editProductModal');
+                editModal.querySelector('#editTagPromotion').checked = hasPromotion;
+                editModal.querySelector('#editCommissionSettings').style.display = hasPromotion ? 'block' : 'none';
+            });
+        });
+    </script>
+</body>
+</html> 

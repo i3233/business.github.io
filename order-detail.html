@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单详情 - 本地生活小程序</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            padding-bottom: 80px;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+        }
+
+        .back-button {
+            width: 24px;
+            height: 24px;
+            background-image: url('https://cdn-icons-png.flaticon.com/512/271/271239.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            margin-right: 10px;
+        }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: bold;
+            flex: 1;
+            text-align: center;
+        }
+
+        /* Status Section */
+        .status-section {
+            background: #ff6b6b;
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+        }
+
+        .status-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .status-desc {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Content Sections */
+        .section {
+            background: white;
+            margin: 10px 0;
+            padding: 15px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        /* Merchant Info */
+        .merchant-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .merchant-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .merchant-detail {
+            flex: 1;
+        }
+
+        .merchant-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .merchant-address {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .merchant-phone {
+            font-size: 12px;
+            color: #ff6b6b;
+            text-decoration: none;
+        }
+
+        .contact-button {
+            padding: 6px 12px;
+            border: 1px solid #ff6b6b;
+            border-radius: 15px;
+            color: #ff6b6b;
+            font-size: 12px;
+            background: white;
+            cursor: pointer;
+        }
+
+        /* Product Info */
+        .product-item {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+
+        .product-detail {
+            flex: 1;
+        }
+
+        .product-name {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .product-spec {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .product-price {
+            font-size: 14px;
+            color: #ff6b6b;
+        }
+
+        .product-quantity {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Price Info */
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .price-item.total {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #f5f5f5;
+        }
+
+        /* Verification Info */
+        .verification-code {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .code-number {
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            margin: 15px 0;
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .save-qr-button {
+            display: block;
+            width: 200px;
+            margin: 10px auto;
+            padding: 10px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Order Info */
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .info-label {
+            color: #666;
+        }
+
+        .info-value {
+            color: #333;
+        }
+
+        .copy-button {
+            color: #ff6b6b;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        /* Points Info */
+        .points-info {
+            background: #fff9f9;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .points-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .points-value {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 10px 15px;
+            display: flex;
+            gap: 10px;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+        }
+
+        .action-button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .action-button.secondary {
+            background: white;
+            border: 1px solid #ddd;
+            color: #666;
+        }
+
+        .action-button.primary {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+        }
+
+        /* Tabbar Styles */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #fff;
+            display: flex;
+            box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            text-decoration: none;
+            font-size: 12px;
+        }
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+        }
+        .tab-item.active {
+            color: #ff6b6b;
+        }
+        .tab-item:hover {
+            color: #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="back-button" onclick="history.back()"></div>
+            <div class="page-title">订单详情</div>
+        </div>
+
+        <!-- Status Section -->
+        <div class="status-section">
+            <div class="status-title">待核销</div>
+            <div class="status-desc">请前往门店核销此订单，核销码如下</div>
+        </div>
+
+        <!-- Merchant Info -->
+        <div class="section">
+            <div class="merchant-info">
+                <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=100" alt="商家头像" class="merchant-avatar">
+                <div class="merchant-detail">
+                    <div class="merchant-name">火锅店</div>
+                    <div class="merchant-address">北京市朝阳区建国路88号</div>
+                    <a href="tel:010-12345678" class="merchant-phone">010-12345678</a>
+                </div>
+                <button class="contact-button">联系客服</button>
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="section">
+            <div class="section-title">商品信息</div>
+            <div class="product-item">
+                <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=200" alt="商品图片" class="product-image">
+                <div class="product-detail">
+                    <div class="product-name">牛肉火锅套餐</div>
+                    <div class="product-spec">双人套餐，含锅底、牛肉、配菜</div>
+                    <div class="product-price">¥80.00 + 20积分</div>
+                    <div class="product-quantity">× 1</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Price Info -->
+        <div class="section">
+            <div class="section-title">订单金额</div>
+            <div class="price-item">
+                <span>商品总额</span>
+                <span>¥100.00</span>
+            </div>
+            <div class="price-item">
+                <span>积分抵扣</span>
+                <span>-20积分（¥4.00）</span>
+            </div>
+            <div class="price-item total">
+                <span>实付金额</span>
+                <span>¥80.00 + 20积分</span>
+            </div>
+            <div class="price-item">
+                <span>支付方式</span>
+                <span>微信支付</span>
+            </div>
+            <div class="price-item">
+                <span>发票状态</span>
+                <span>未开票</span>
+            </div>
+        </div>
+
+        <!-- Verification Info -->
+        <div class="section">
+            <div class="section-title">核销信息</div>
+            <div class="verification-code">
+                <div>核销码</div>
+                <div class="code-number">123456</div>
+                <div class="qr-code">二维码图片</div>
+                <button class="save-qr-button">保存二维码</button>
+                <div style="font-size: 12px; color: #666; margin-top: 10px;">
+                    请到店出示核销码，由店员完成核销<br>
+                    核销有效期：下单日起3天内有效
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Info -->
+        <div class="section">
+            <div class="section-title">订单信息</div>
+            <div class="info-item">
+                <span class="info-label">订单编号</span>
+                <span class="info-value">
+                    202505091530123456
+                    <span class="copy-button">复制</span>
+                </span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">下单时间</span>
+                <span class="info-value">2025-05-09 15:30</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">支付时间</span>
+                <span class="info-value">2025-05-09 15:35</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">订单备注</span>
+                <span class="info-value">无</span>
+            </div>
+        </div>
+
+        <!-- Points Info -->
+        <div class="section">
+            <div class="section-title">积分信息</div>
+            <div class="points-info">
+                <div class="points-item">
+                    <span>获得积分</span>
+                    <span class="points-value">16积分</span>
+                </div>
+                <div class="points-item">
+                    <span>积分到账时间</span>
+                    <span>完成订单后立即到账</span>
+                </div>
+                <div class="points-item">
+                    <span>积分有效期</span>
+                    <span>获得日起7日内有效</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="action-button secondary">联系商家</button>
+            <button class="action-button primary">出示核销码</button>
+        </div>
+    </div>
+
+    <!-- Tabbar -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span>商城</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>我的</span>
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 复制订单号
+            const copyButton = document.querySelector('.copy-button');
+            copyButton.addEventListener('click', function() {
+                const orderNumber = this.parentElement.textContent.trim();
+                navigator.clipboard.writeText(orderNumber).then(() => {
+                    alert('订单号已复制');
+                });
+            });
+
+            // 保存二维码
+            const saveQrButton = document.querySelector('.save-qr-button');
+            saveQrButton.addEventListener('click', function() {
+                // 这里添加保存二维码的逻辑
+                alert('二维码已保存到相册');
+            });
+
+            // 联系商家
+            const contactButton = document.querySelector('.contact-button');
+            contactButton.addEventListener('click', function() {
+                // 这里添加联系商家的逻辑
+                alert('正在连接商家客服...');
+            });
+        });
+    </script>
+</body>
+</html> 

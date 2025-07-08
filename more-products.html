@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>更多优兑商品 - 优兑生活</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding-bottom: 50px;
+        }
+
+        /* 顶部导航栏 */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 44px;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .back-button {
+            width: 24px;
+            height: 24px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .back-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 12px;
+            height: 12px;
+            border-top: 2px solid #333;
+            border-left: 2px solid #333;
+            transform: translateY(-50%) rotate(-45deg);
+        }
+
+        .page-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* 下边模块标题样式 */
+        .section-tabs {
+            margin-top: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #fff;
+        }
+
+        .tab-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .tab-item {
+            font-size: 15px;
+            color: #666;
+            cursor: pointer;
+            position: relative;
+            padding-bottom: 4px;
+        }
+
+        .tab-item.active {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #ff6b6b;
+            border-radius: 1px;
+        }
+
+        /* 本地优兑商品网格 */
+        .local-products {
+            background: #fff;
+            padding: 15px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .grid-product {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .grid-product-image {
+            width: 100%;
+            height: 120px;
+            background: #f5f5f5;
+        }
+
+        .grid-product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .grid-product-info {
+            padding: 8px;
+        }
+
+        .grid-product-name {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .grid-product-price {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+
+        .grid-original-price {
+            font-size: 12px;
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .grid-current-price {
+            font-size: 15px;
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+
+        .grid-points-price {
+            font-size: 12px;
+            color: #ff6b6b;
+        }
+
+        .grid-purchase-count {
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* 联营优兑商品组 */
+        .partner-products {
+            background: #fff;
+            padding: 15px;
+            display: none;
+        }
+
+        .product-pair {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .pair-product {
+            flex: 1;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .pair-product-image {
+            width: 100%;
+            height: 100px;
+            background: #f5f5f5;
+        }
+
+        .pair-product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .pair-product-info {
+            padding: 8px;
+        }
+
+        .pair-product-name {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pair-product-price {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .pair-original-price {
+            font-size: 12px;
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .pair-current-price {
+            font-size: 15px;
+            color: #ff6b6b;
+            font-weight: 600;
+        }
+
+        .pair-relation {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 0 5px;
+        }
+
+        .relation-arrow {
+            width: 20px;
+            height: 20px;
+            position: relative;
+        }
+
+        .relation-arrow::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 8px;
+            height: 8px;
+            border-top: 2px solid #ff6b6b;
+            border-right: 2px solid #ff6b6b;
+            transform: translateY(-50%) rotate(45deg);
+        }
+
+        .relation-tag {
+            font-size: 12px;
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .relation-desc {
+            font-size: 11px;
+            color: #666;
+            text-align: center;
+            max-width: 60px;
+        }
+
+        /* 底部导航栏 */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #fff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -1px 2px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 10px;
+            padding: 4px 0;
+        }
+
+        .tab-item.active {
+            color: #ff6b6b;
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="nav-bar">
+        <div class="back-button" onclick="history.back()"></div>
+        <div class="page-title">更多优兑商品</div>
+        <div style="width: 24px;"></div>
+    </div>
+
+    <!-- 下边模块 -->
+    <div class="section-tabs">
+        <div class="tab-group">
+            <div class="tab-item active">本地优兑</div>
+            <div class="tab-item">联营优兑</div>
+        </div>
+    </div>
+
+    <!-- 本地优兑商品展示 -->
+    <div class="local-products">
+        <div class="product-grid">
+            <!-- 第一组商品 -->
+            <div class="grid-product">
+                <a href="local-product.html" style="text-decoration: none; color: inherit;">
+                    <div class="grid-product-image">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                    </div>
+                    <div class="grid-product-info">
+                        <div class="grid-product-name">东北大米 5kg装</div>
+                        <div class="grid-product-price">
+                            <span class="grid-original-price">¥99.00</span>
+                            <span class="grid-current-price">¥59.00</span>
+                            <span class="grid-points-price">+200积分</span>
+                        </div>
+                        <div class="grid-purchase-count">已购 2.3万份</div>
+                    </div>
+                </a>
+            </div>
+            <div class="grid-product">
+                <div class="grid-product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="grid-product-info">
+                    <div class="grid-product-name">进口水果礼盒</div>
+                    <div class="grid-product-price">
+                        <span class="grid-original-price">¥199.00</span>
+                        <span class="grid-current-price">¥129.00</span>
+                        <span class="grid-points-price">+300积分</span>
+                    </div>
+                    <div class="grid-purchase-count">已购 1.5万份</div>
+                </div>
+            </div>
+            <!-- 第二组商品 -->
+            <div class="grid-product">
+                <div class="grid-product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="grid-product-info">
+                    <div class="grid-product-name">有机牛奶</div>
+                    <div class="grid-product-price">
+                        <span class="grid-original-price">¥59.00</span>
+                        <span class="grid-current-price">¥39.00</span>
+                        <span class="grid-points-price">+100积分</span>
+                    </div>
+                    <div class="grid-purchase-count">已购 8000份</div>
+                </div>
+            </div>
+            <div class="grid-product">
+                <div class="grid-product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="grid-product-info">
+                    <div class="grid-product-name">精品坚果</div>
+                    <div class="grid-product-price">
+                        <span class="grid-original-price">¥89.00</span>
+                        <span class="grid-current-price">¥59.00</span>
+                        <span class="grid-points-price">+150积分</span>
+                    </div>
+                    <div class="grid-purchase-count">已购 1.2万份</div>
+                </div>
+            </div>
+            <!-- 第三组商品 -->
+            <div class="grid-product">
+                <div class="grid-product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="grid-product-info">
+                    <div class="grid-product-name">智能手表</div>
+                    <div class="grid-product-price">
+                        <span class="grid-original-price">¥599.00</span>
+                        <span class="grid-current-price">¥299.00</span>
+                        <span class="grid-points-price">+500积分</span>
+                    </div>
+                    <div class="grid-purchase-count">已购 8千份</div>
+                </div>
+            </div>
+            <div class="grid-product">
+                <div class="grid-product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="grid-product-info">
+                    <div class="grid-product-name">无线蓝牙耳机</div>
+                    <div class="grid-product-price">
+                        <span class="grid-original-price">¥399.00</span>
+                        <span class="grid-current-price">¥199.00</span>
+                        <span class="grid-points-price">+200积分</span>
+                    </div>
+                    <div class="grid-purchase-count">已购 1.2万份</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 联营优兑商品展示 -->
+    <div class="partner-products">
+        <div class="product-pair">
+            <div class="pair-product">
+                <div class="pair-product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="pair-product-info">
+                    <div class="pair-product-name">进口红酒 750ml</div>
+                    <div class="pair-product-price">
+                        <span class="pair-original-price">¥299.00</span>
+                        <span class="pair-current-price">¥199.00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="pair-relation">
+                <div class="relation-arrow"></div>
+                <div class="relation-tag">买一送一</div>
+                <div class="relation-desc">限时特惠</div>
+            </div>
+            <div class="pair-product">
+                <div class="pair-product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="pair-product-info">
+                    <div class="pair-product-name">红酒开瓶器套装</div>
+                    <div class="pair-product-price">
+                        <span class="pair-original-price">¥99.00</span>
+                        <span class="pair-current-price">¥0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="product-pair">
+            <div class="pair-product">
+                <div class="pair-product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="pair-product-info">
+                    <div class="pair-product-name">智能手表</div>
+                    <div class="pair-product-price">
+                        <span class="pair-original-price">¥599.00</span>
+                        <span class="pair-current-price">¥399.00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="pair-relation">
+                <div class="relation-arrow"></div>
+                <div class="relation-tag">套装优惠</div>
+                <div class="relation-desc">立减200元</div>
+            </div>
+            <div class="pair-product">
+                <div class="pair-product-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LXNpemU9IjE0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5Ij5Qcm9kdWN0PC90ZXh0Pjwvc3ZnPg==" alt="商品图片">
+                </div>
+                <div class="pair-product-info">
+                    <div class="pair-product-name">无线充电器</div>
+                    <div class="pair-product-price">
+                        <span class="pair-original-price">¥199.00</span>
+                        <span class="pair-current-price">¥99.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDIwdi02aDR2Nmg0di04aDNMMTIgMyAyIDIyaDN2LTh6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="首页">
+            </div>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="电商购物">
+            </div>
+            <span>电商购物</span>
+        </a>
+        <a href="local.html" class="tab-item active">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM0YTkwZTIiLz48L3N2Zz4=" alt="本地生活">
+            </div>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="会员中心">
+            </div>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="个人中心">
+            </div>
+            <span>个人中心</span>
+        </a>
+    </div>
+
+    <script>
+        // 页卡切换功能
+        const tabItems = document.querySelectorAll('.tab-item');
+        const localProducts = document.querySelector('.local-products');
+        const partnerProducts = document.querySelector('.partner-products');
+
+        tabItems.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有标签的active类
+                tabItems.forEach(t => t.classList.remove('active'));
+                // 添加当前标签的active类
+                tab.classList.add('active');
+                
+                // 切换内容显示
+                if (tab.textContent === '本地优兑') {
+                    localProducts.style.display = 'block';
+                    partnerProducts.style.display = 'none';
+                } else {
+                    localProducts.style.display = 'none';
+                    partnerProducts.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的分享</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.5;
+            padding-bottom: 60px;
+        }
+
+        /* 顶部导航栏 */
+        .header {
+            background: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+            padding: 5px;
+            margin-right: 10px;
+        }
+
+        .title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        /* 分享内容区域 */
+        .share-section {
+            margin: 10px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin: 15px 0 10px;
+            padding-left: 10px;
+            border-left: 3px solid #ff6b6b;
+        }
+
+        /* 店铺列表 */
+        .store-list {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .store-item {
+            display: flex;
+            padding: 15px;
+            border-bottom: 1px solid #f5f5f5;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .store-item:last-child {
+            border-bottom: none;
+        }
+
+        .store-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .store-info {
+            flex: 1;
+        }
+
+        .store-name {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .store-address {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .store-rating {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #ff6b6b;
+        }
+
+        .store-rating i {
+            margin-right: 3px;
+        }
+
+        /* 商品列表 */
+        .product-list {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .product-item {
+            display: flex;
+            padding: 15px;
+            border-bottom: 1px solid #f5f5f5;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-name {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .product-desc {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-price {
+            font-size: 1.1rem;
+            color: #ff6b6b;
+            font-weight: 500;
+        }
+
+        /* 底部导航栏 */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 10px;
+            padding: 4px 0;
+        }
+
+        .tab-item.active {
+            color: #ff6b6b;
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <button class="back-btn">
+            <i class="ri-arrow-left-s-line"></i>
+        </button>
+        <h1 class="title">我的分享</h1>
+    </header>
+
+    <!-- 分享内容区域 -->
+    <div class="share-section">
+        <!-- 分享的店铺 
+        <h2 class="section-title">分享的店铺</h2>
+        <div class="store-list">
+            <a href="store.html" class="store-item">
+                <img src="https://via.placeholder.com/60" alt="店铺图片" class="store-avatar">
+                <div class="store-info">
+                    <div class="store-name">优品生活超市</div>
+                    <div class="store-address">北京市海淀区双安街88号</div>
+                    <div class="store-rating">
+                        <i class="ri-star-fill"></i>
+                        <span>4.9分</span>
+                    </div>
+                </div>
+            </a>
+            <a href="store.html" class="store-item">
+                <img src="https://via.placeholder.com/60" alt="店铺图片" class="store-avatar">
+                <div class="store-info">
+                    <div class="store-name">鲜果生活馆</div>
+                    <div class="store-address">北京市朝阳区建国路99号</div>
+                    <div class="store-rating">
+                        <i class="ri-star-fill"></i>
+                        <span>4.8分</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+-->
+        <!-- 分享的商品 -->
+        <h2 class="section-title">分享的商品</h2>
+        <div class="product-list">
+            <a href="product.html" class="product-item">
+                <img src="https://via.placeholder.com/80" alt="商品图片" class="product-image">
+                <div class="product-info">
+                    <div class="product-name">有机蔬菜礼盒</div>
+                    <div class="product-desc">精选有机蔬菜，新鲜直达，营养健康，适合全家食用。</div>
+                    <div class="product-price">¥88.00</div>
+                </div>
+            </a>
+            <a href="product.html" class="product-item">
+                <img src="https://via.placeholder.com/80" alt="商品图片" class="product-image">
+                <div class="product-info">
+                    <div class="product-name">进口水果礼盒</div>
+                    <div class="product-desc">精选进口水果，品质保证，送礼佳选。</div>
+                    <div class="product-price">¥128.00</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDIwdi02aDR2Nmg0di04aDNMMTIgMyAyIDIyaDN2LTh6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="首页">
+            </div>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="电商购物">
+            </div>
+            <span>电商购物</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="本地生活">
+            </div>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="会员中心">
+            </div>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item active">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="个人中心">
+            </div>
+            <span>个人中心</span>
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 返回按钮点击事件
+            document.querySelector('.back-btn').addEventListener('click', function() {
+                window.history.back();
+            });
+        });
+    </script>
+</body>
+</html> 

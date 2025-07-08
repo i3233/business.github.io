@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>评价管理 - 商家中心</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --light-gray: #f8f9fa;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        /* 顶部筛选栏样式 */
+        .filter-bar {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .filter-tag {
+            background: var(--light-gray);
+            border-radius: 15px;
+            padding: 5px 12px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filter-tag.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* 评价列表样式 */
+        .review-list {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .review-card {
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        .review-time {
+            color: var(--secondary-color);
+            font-size: 14px;
+        }
+
+        .review-content {
+            margin: 10px 0;
+        }
+
+        .review-images {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .review-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 4px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .review-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .status-badge.unreplied {
+            background: #f5f5f5;
+            color: var(--secondary-color);
+        }
+
+        .status-badge.replied {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+
+        .status-badge.appealing {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+
+        .status-badge.appeal-success {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+
+        .status-badge.appeal-rejected {
+            background: #fff2e8;
+            color: #fa8c16;
+        }
+
+        .stars {
+            color: #ffc107;
+        }
+
+        .platform-tag {
+            background: #e6f7ff;
+            color: #1890ff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .merchant-reply {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        .merchant-reply-time {
+            color: var(--secondary-color);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .filter-bar {
+                padding: 15px;
+            }
+
+            .review-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .review-footer {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .review-images {
+                flex-wrap: wrap;
+            }
+
+            .review-image {
+                width: 60px;
+                height: 60px;
+            }
+
+            .filter-tags {
+                gap: 5px;
+            }
+
+            .filter-tag {
+                font-size: 12px;
+                padding: 3px 8px;
+            }
+        }
+
+        .form-select {
+            font-size: 14px;
+            padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+        }
+
+        .form-select option {
+            font-size: 14px;
+            padding: 8px;
+        }
+
+        /* 底部导航栏 */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #fff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -1px 2px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 10px;
+            padding: 4px 0;
+        }
+
+        .tab-item.active {
+            color: #ff6b6b;
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部筛选栏 -->
+    <div class="filter-bar">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
+            <div class="d-flex flex-column w-100 mb-2 mb-md-0">
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" placeholder="搜索商品名称或评价内容">
+                    <button class="btn btn-outline-secondary">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+                <div class="d-flex gap-2">
+                    <select class="form-select">
+                        <option value="">全部评价</option>
+                        <option value="positive">好评</option>
+                        <option value="negative">差评</option>
+                    </select>
+                    <select class="form-select">
+                        <option value="">回复状态</option>
+                        <option value="replied">已回复</option>
+                        <option value="unreplied">未回复</option>
+                    </select>
+                    <select class="form-select">
+                        <option value="">申诉状态</option>
+                        <option value="none">未申诉</option>
+                        <option value="appealing">申诉中</option>
+                        <option value="success">申诉成功</option>
+                        <option value="rejected">申诉驳回</option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <input type="date" class="form-control" value="2024-03-01">
+                <span class="align-self-center">至</span>
+                <input type="date" class="form-control" value="2024-03-31">
+            </div>
+        </div>
+        <div class="filter-tags">
+            <div class="filter-tag active">
+                <span>全部</span>
+                <i class="bi bi-x"></i>
+            </div>
+            <div class="filter-tag">
+                <span>好评</span>
+                <i class="bi bi-x"></i>
+            </div>
+            <div class="filter-tag">
+                <span>已回复</span>
+                <i class="bi bi-x"></i>
+            </div>
+            <div class="filter-tag">
+                <span>申诉中</span>
+                <i class="bi bi-x"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 评价列表 -->
+    <div class="review-list">
+        <!-- 评价卡片1 -->
+        <div class="review-card">
+            <div class="review-header">
+                <div class="user-info">
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop" class="user-avatar" alt="用户头像">
+                    <div>
+                        <div class="user-name">张**</div>
+                        <div class="review-time">2024年3月15日 14:30</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review-content">
+                <div class="mb-2">商品：双人火锅套餐A</div>
+                <div>服务态度很好，菜品新鲜，环境也不错，下次还会再来！</div>
+            </div>
+            <div class="review-images">
+                <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=200&h=200&fit=crop" class="review-image" alt="评价图片">
+                <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200&h=200&fit=crop" class="review-image" alt="评价图片">
+            </div>
+            <div class="merchant-reply">
+                <div>感谢您的好评，欢迎下次光临！</div>
+                <div class="merchant-reply-time">商家回复于 2024年3月15日 15:00</div>
+            </div>
+            <div class="review-footer">
+                <div class="d-flex gap-2">
+                    <span class="status-badge replied">已回复</span>
+                    <span class="platform-tag">平台补贴</span>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#replyModal">
+                        修改回复
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 评价卡片2 -->
+        <div class="review-card">
+            <div class="review-header">
+                <div class="user-info">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" class="user-avatar" alt="用户头像">
+                    <div>
+                        <div class="user-name">李**</div>
+                        <div class="review-time">2024年3月14日 19:45</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review-content">
+                <div class="mb-2">商品：招牌奶茶</div>
+                <div>味道一般，价格偏贵，服务态度也不好。</div>
+            </div>
+            <div class="review-footer">
+                <div class="d-flex gap-2">
+                    <span class="status-badge unreplied">未回复</span>
+                    <span class="status-badge appealing">申诉中</span>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#replyModal">
+                        回复
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#appealModal">
+                        申诉详情
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 评价卡片3 -->
+        <div class="review-card">
+            <div class="review-header">
+                <div class="user-info">
+                    <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop" class="user-avatar" alt="用户头像">
+                    <div>
+                        <div class="user-name">王**</div>
+                        <div class="review-time">2024年3月13日 12:20</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review-content">
+                <div class="mb-2">商品：水果沙拉</div>
+                <div>水果很新鲜，分量足，包装也很精美，就是配送时间有点长。</div>
+            </div>
+            <div class="review-images">
+                <img src="https://images.unsplash.com/photo-1564093497595-593b96d80180?w=200&h=200&fit=crop" class="review-image" alt="评价图片">
+            </div>
+            <div class="merchant-reply">
+                <div>感谢您的反馈，我们会改进配送服务，期待您的再次光临！</div>
+                <div class="merchant-reply-time">商家回复于 2024年3月13日 13:00</div>
+            </div>
+            <div class="review-footer">
+                <div class="d-flex gap-2">
+                    <span class="status-badge replied">已回复</span>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#replyModal">
+                        修改回复
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 评价卡片4 -->
+        <div class="review-card">
+            <div class="review-header">
+                <div class="user-info">
+                    <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&h=100&fit=crop" class="user-avatar" alt="用户头像">
+                    <div>
+                        <div class="user-name">赵**</div>
+                        <div class="review-time">2024年3月12日 18:15</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review-content">
+                <div class="mb-2">商品：三明治套餐</div>
+                <div>三明治很好吃，但是饮料太甜了，建议可以调整甜度。</div>
+            </div>
+            <div class="review-footer">
+                <div class="d-flex gap-2">
+                    <span class="status-badge unreplied">未回复</span>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#replyModal">
+                        回复
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 评价卡片5 -->
+        <div class="review-card">
+            <div class="review-header">
+                <div class="user-info">
+                    <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&h=100&fit=crop" class="user-avatar" alt="用户头像">
+                    <div>
+                        <div class="user-name">陈**</div>
+                        <div class="review-time">2024年3月11日 20:30</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review-content">
+                <div class="mb-2">商品：双人火锅套餐B</div>
+                <div>服务态度很好，但是菜品分量有点少，希望能增加一些。</div>
+            </div>
+            <div class="review-images">
+                <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=200&h=200&fit=crop" class="review-image" alt="评价图片">
+            </div>
+            <div class="merchant-reply">
+                <div>感谢您的建议，我们会适当调整菜品分量，欢迎再次光临！</div>
+                <div class="merchant-reply-time">商家回复于 2024年3月11日 21:00</div>
+            </div>
+            <div class="review-footer">
+                <div class="d-flex gap-2">
+                    <span class="status-badge replied">已回复</span>
+                    <span class="platform-tag">平台补贴</span>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#replyModal">
+                        修改回复
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 回复弹窗 -->
+    <div class="modal fade" id="replyModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">回复评价</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">回复内容</label>
+                        <textarea class="form-control" rows="4" maxlength="200" placeholder="请输入回复内容（最多200字）"></textarea>
+                        <div class="form-text text-end">0/200</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 申诉弹窗 -->
+    <div class="modal fade" id="appealModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">发起申诉</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">申诉原因</label>
+                            <select class="form-select">
+                                <option value="">请选择申诉原因</option>
+                                <option value="malicious">恶意评价</option>
+                                <option value="mismatch">与订单不符</option>
+                                <option value="abuse">辱骂言论</option>
+                                <option value="other">其他</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">补充说明</label>
+                            <textarea class="form-control" rows="4" maxlength="300" placeholder="请详细说明申诉理由（最多300字）"></textarea>
+                            <div class="form-text text-end">0/300</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">上传证据（最多3张）</label>
+                            <div class="d-flex gap-2">
+                                <div class="border rounded p-2 text-center" style="width: 100px; height: 100px;">
+                                    <i class="bi bi-plus-lg"></i>
+                                    <div class="small">上传图片</div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">提交申诉</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDIwdi02aDR2Nmg0di04aDNMMTIgMyAyIDIyaDN2LTh6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="首页">
+            </div>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="电商购物">
+            </div>
+            <span>电商购物</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="本地生活">
+            </div>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="会员中心">
+            </div>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="个人中心">
+            </div>
+            <span>个人中心</span>
+        </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 筛选标签点击事件
+        document.querySelectorAll('.filter-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        // 回复字数统计
+        const replyTextarea = document.querySelector('#replyModal textarea');
+        const replyCount = document.querySelector('#replyModal .form-text');
+        replyTextarea.addEventListener('input', function() {
+            replyCount.textContent = `${this.value.length}/200`;
+        });
+
+        // 申诉字数统计
+        const appealTextarea = document.querySelector('#appealModal textarea');
+        const appealCount = document.querySelector('#appealModal .form-text');
+        appealTextarea.addEventListener('input', function() {
+            appealCount.textContent = `${this.value.length}/300`;
+        });
+
+        // 评价图片点击放大
+        document.querySelectorAll('.review-image').forEach(img => {
+            img.addEventListener('click', function() {
+                // 实现图片放大预览功能
+                const modal = new bootstrap.Modal(document.createElement('div'));
+                modal.show();
+            });
+        });
+    </script>
+</body>
+</html> 

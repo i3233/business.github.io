@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心 - 优兑生活</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding-bottom: 50px;
+        }
+
+        /* 个人中心头部 */
+        .profile-header {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            padding: 20px 15px;
+            color: #fff;
+            position: relative;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #fff;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-id {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .id-arrow {
+            width: 16px;
+            height: 16px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .id-arrow::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            border-top: 2px solid #fff;
+            border-right: 2px solid #fff;
+            transform: translateY(-50%) rotate(45deg);
+        }
+
+        .user-level {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* 等级展示区域 */
+        .level-section {
+            background: #fff;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .level-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .level-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .level-value {
+            font-size: 14px;
+            color: #ff6b6b;
+            font-weight: 500;
+        }
+
+        .exp-bar {
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .exp-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
+            border-radius: 3px;
+            width: 65%; /* 示例进度 */
+        }
+
+        .exp-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .exp-current {
+            color: #ff6b6b;
+        }
+
+        .exp-next {
+            color: #666;
+        }
+
+        /* 功能入口区域 */
+        .entry-section {
+            background: #fff;
+            margin: 10px;
+            padding: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .entry-list {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .entry-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            width: 20%;
+        }
+
+        .entry-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .entry-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .entry-text {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* 关注公众号按钮 */
+        .follow-button {
+            margin: 10px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .follow-button a {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .follow-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .follow-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .follow-text {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .follow-arrow {
+            margin-left: auto;
+            width: 16px;
+            height: 16px;
+            position: relative;
+        }
+
+        .follow-arrow::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 0;
+            width: 6px;
+            height: 6px;
+            border-top: 2px solid #999;
+            border-right: 2px solid #999;
+            transform: translateY(-50%) rotate(45deg);
+        }
+
+        /* 常用功能区 */
+        .common-functions {
+            background: #fff;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .function-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px 0;
+        }
+
+        .function-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .function-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .function-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .function-text {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* 底部导航栏 */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #fff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -1px 2px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 10px;
+            padding: 4px 0;
+        }
+
+        .tab-item.active {
+            color: #ff6b6b;
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <!-- 个人中心头部 -->
+    <div class="profile-header">
+        <div class="user-info">
+            <div class="avatar">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=" alt="用户头像">
+            </div>
+            <div class="user-details">
+                <div class="user-id">
+                    <span>ID: 888888</span>
+                    <div class="id-arrow"></div>
+                </div>
+                <div class="user-level">普通会员</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 等级展示区域 -->
+    <div class="level-section">
+        <div class="level-info">
+            <div class="level-title">当前等级</div>
+            <div class="level-value">Lv.3 普通会员</div>
+        </div>
+        <!--
+        <div class="exp-bar">
+            <div class="exp-progress"></div>
+        </div>
+        <div class="exp-info">
+            <span class="exp-current">当前经验：650</span>
+            <span class="exp-next">距离下一级还需：350</span>
+        </div>
+-->
+    </div>
+
+    <!-- 功能入口区域 -->
+    <div class="entry-section">
+        <div class="entry-list">
+            <a href="my-orders.html" class="entry-item">
+                <div class="entry-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTE5IDNoLTRWMGgtNnYzaC00Yy0xLjEgMC0yIC45LTIgMnYxNGMwIDEuMS45IDIgMiAyaDE4YzEuMSAwIDItLjkgMi0yVjVjMC0xLjEtLjktMi0yLTJ6bTAgMTZINVY1aDE0djE0ek03IDdoMTB2Mkg3Vjd6bTAgNGgxMHYySDd2LTJ6bTAgNGgxMHYySDd2LTJ6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="我的订单">
+                </div>
+                <span class="entry-text">我的订单</span>
+            </a>
+            <a href="my-points.html" class="entry-item">
+                <div class="entry-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgMThjLTQuNDEgMC04LTMuNTktOC04czMuNTktOCA4LTggOCAzLjU5IDggOC0zLjU5IDgtOCA4em0uNS0xM0gxMXY2bDUuMjUgMy4xNUwxNyAxNS4wMmw0LjI1LTcuMTdMMTcuNSA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="U积分账户">
+                </div>
+                <span class="entry-text">U积分账户</span>
+            </a>
+            <a href="promotion-records.html" class="entry-item">
+                <div class="entry-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjIxIDAgNCAxLjc5IDQgNHMtMS43OSA0LTQgNC00LTEuNzktNC00IDEuNzktNCA0LTR6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="我的门店">
+                </div>
+                <span class="entry-text">我的推广门店</span>
+            </a>
+            <a href="my-fans.html" class="entry-item">
+                <div class="entry-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTExLjggMTBjLjE3LS4xNy40Mi0uMTcuNTkgMGw3IDdjLjE3LjE3LjE3LjQyIDAgLjU5bC0xLjQxIDEuNDFjLS4xNy4xNy0uNDIuMTctLjU5IDBsLTctN2MtLjE3LS4xNy0uMTctLjQyIDAtLjU5bDEuNDEtMS40MWMuMTctLjE3LjQyLS4xNy41OSAwem0tNiA2Yy4xNy0uMTcuNDItLjE3LjU5IDBsNyA3Yy4xNy4xNy4xNy40MiAwIC41OWwtMS40MSAxLjQxYy0uMTcuMTctLjQyLjE3LS41OSAwbC03LTdjLS4xNy0uMTctLjE3LS40MiAwLS41OWwxLjQxLTEuNDFjLjE3LS4xNy40Mi0uMTcuNTkgMHptLTYgNmMuMTctLjE3LjQyLS4xNy41OSAwbDcgN2MuMTcuMTcuMTcuNDIgMCAuNTlsLTEuNDEgMS40MWMtLjE3LjE3LS40Mi4xNy0uNTkgMGwtNy03Yy0uMTctLjE3LS4xNy0uNDIgMC0uNTlsMS40MS0xLjQxYy4xNy0uMTcuNDItLjE3LjU5IDB6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="我的粉丝">
+                </div>
+                <span class="entry-text">我的粉丝</span>
+            </a>
+            <a href="account-balance.html" class="entry-item">
+                <div class="entry-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTExLjggMTBjLjE3LS4xNy40Mi0uMTcuNTkgMGw3IDdjLjE3LjE3LjE3LjQyIDAgLjU5bC0xLjQxIDEuNDFjLS4xNy4xNy0uNDIuMTctLjU5IDBsLTctN2MtLjE3LS4xNy0uMTctLjQyIDAtLjU5bDEuNDEtMS40MWMuMTctLjE3LjQyLS4xNy41OSAwem0tNiA2Yy4xNy0uMTcuNDItLjE3LjU5IDBsNyA3Yy4xNy4xNy4xNy40MiAwIC41OWwtMS40MSAxLjQxYy0uMTcuMTctLjQyLjE3LS41OSAwbC03LTdjLS4xNy0uMTctLjE3LS40MiAwLS41OWwxLjQxLTEuNDFjLjE3LS4xNy40Mi0uMTcuNTkgMHptLTYgNmMuMTctLjE3LjQyLS4xNy41OSAwbDcgN2MuMTcuMTcuMTcuNDIgMCAuNTlsLTEuNDEgMS40MWMtLjE3LjE3LS40Mi4xNy0uNTkgMGwtNy03Yy0uMTctLjE3LS4xNy0uNDIgMC0uNTlsMS40MS0xLjQxYy4xNy0uMTcuNDItLjE3LjU5IDB6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="账户余额">
+                </div>
+                <span class="entry-text">账户余额</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 关注公众号按钮 -->
+    <div class="follow-button">
+        <a href="#">
+            <div class="follow-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTIwIDRINGMtMS4xIDAtMS45OS45LTEuOTkgMkwyIDE4YzAgMS4xLjkgMiAyIDJoMTZjMS4xIDAgMi0uOSAyLTJWNmMwLTEuMS0uOS0yLTItMnptLS40IDQuMjVsLTcuMDcgNC40MmMtLjMyLjItLjc0LjItMS4wNiAwTDQuNCA4LjI1Yy0uMjUtLjE2LS40LS40My0uNC0uNzIgMC0uNjcuNzMtMS4wNyAxLjMtLjcyTDEyIDExbDYuNy00LjE5Yy41Ny0uMzUgMS4zLjA1IDEuMy43MiAwIC4yOS0uMTUuNTYtLjQuNzJ6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="关注公众号">
+            </div>
+            <span class="follow-text">关注公众号</span>
+            <div class="follow-arrow"></div>
+        </a>
+    </div>
+
+    <!-- 常用功能区 -->
+    <div class="common-functions">
+        <div class="function-grid">
+            <!--
+            <a href="cart.html" class="function-item">
+                <div class="function-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="购物车">
+                </div>
+                <span class="function-text">购物车</span>
+            </a>-->
+            <a href="favorites.html" class="function-item">
+                <div class="function-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDIxLjM1bC0xLjQ1LTEuMzJDNS40IDE1LjM2IDIgMTIuMjggMiA4LjUgMiA1LjQyIDQuNDIgMyA3LjUgM2MxLjc4IDAgMy40MS44MSA0LjUgMi4wOUMxMy4wOSAzLjgxIDE0Ljc2IDMgMTYuNSAzIDE5LjU4IDMgMjIgNS40MiAyMiA4LjVjMCAzLjc4LTMuNCA2Ljg2LTguNTUgMTEuNTRMMTIgMjEuMzV6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="关注收藏">
+                </div>
+                <span class="function-text">关注收藏</span>
+            </a>
+            <a href="my-shares.html" class="function-item">
+                <div class="function-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTE4IDE2LjA4Yy0uNzYgMC0xLjQ0LjMtMS45Ni43N0w4LjkxIDEyLjdjLjA1LS4yMy4wOS0uNDYuMDktLjdzLS4wNC0uNDctLjA5LS43bDcuMDUtNC4xMWMuNTQuNSAxLjI1LjgxIDIuMDQuODEgMS42NiAwIDMtMS4zNCAzLTMtMS4zNC0zLTMtMy0zIDMgMCAuMjQuMDQuNDcuMDkuN0w4LjA0IDkuODFjLS41NC0uNS0xLjI1LS44MS0yLjA0LS44MS0xLjY2IDAtMyAxLjM0LTMgM3MxLjM0IDMgMyAzYy43OSAwIDEuNS0uMzEgMi4wNC0uODFsNy4xMiA0LjE2Yy0uMDUuMjMtLjA4LjQzLS4wOC42NSAwIDEuNjEgMS4zMSAyLjkyIDIuOTIgMi45MiAxLjYxIDAgMi45Mi0xLjMxIDIuOTItMi45MnMtMS4zMS0yLjkyLTIuOTItMi45MnoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="我的分享">
+                </div>
+                <span class="function-text">我的分享</span>
+            </a>
+            <a href="history.html" class="function-item">
+                <div class="function-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEzLjUgOC41YzAgMi41LTIgNC41LTQuNSA0LjVzLTQuNS0yLTQuNS00LjUgMi00LjUgNC41LTQuNSA0LjUgMiA0LjUgNC41ek0xMiAxM2MtMi41IDAtNy41IDEuMjUtNy41IDMuNXYxLjVoMTV2LTEuNWMwLTIuMjUtNS0zLjUtNy41LTMuNXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="浏览足迹">
+                </div>
+                <span class="function-text">浏览足迹</span>
+            </a>
+            <a href="merchant-home.html" class="function-item">
+                <div class="function-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTIwIDRINGMtMS4xIDAtMS45OS45LTEuOTkgMkwyIDE4YzAgMS4xLjkgMiAyIDJoMTZjMS4xIDAgMi0uOSAyLTJWNmMwLTEuMS0uOS0yLTItMnptLTUgMTRIN3YtMmg4djJ6bTMtNEg3di0yaDEwdjJ6bTAtNEg3Vjh2MmgxMXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="门店管理">
+                </div>
+                <span class="function-text">门店管理</span>
+            </a>
+            <a href="my-address.html" class="function-item">
+                <div class="function-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjIxIDAgNCAxLjc5IDQgNHMtMS43OSA0LTQgNC00LTEuNzktNC00IDEuNzktNCA0LTR6bTAgMTQuMmMtMi41IDAtNC43MS0xLjI4LTYtMy4yMi4wMy0xLjk5IDQtMy4wOCA2LTMuMDggMS45OSAwIDUuOTcgMS4wOSA2IDMuMDgtMS4yOSAxLjk0LTMuNSAzLjIyLTYgMy4yMnoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="地址管理">
+                </div>
+                <span class="function-text">地址管理</span>
+            </a>
+            <a href="#" class="function-item">
+                <div class="function-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTIwIDRINGMtMS4xIDAtMS45OS45LTEuOTkgMkwyIDE4YzAgMS4xLjkgMiAyIDJoMTZjMS4xIDAgMi0uOSAyLTJWNmMwLTEuMS0uOS0yLTItMnptLS40IDQuMjVsLTcuMDcgNC40MmMtLjMyLjItLjc0LjItMS4wNiAwTDQuNCA4LjI1Yy0uMjUtLjE2LS40LS40My0uNC0uNzIgMC0uNjcuNzMtMS4wNyAxLjMtLjcyTDEyIDExbDYuNy00LjE5Yy41Ny0uMzUgMS4zLjA1IDEuMy43MiAwIC4yOS0uMTUuNTYtLjQuNzJ6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="联系我们">
+                </div>
+                <span class="function-text">联系我们</span>
+            </a>
+            <a href="merchant-apply.html" class="function-item">
+                <div class="function-icon">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTIwIDRINGMtMS4xIDAtMS45OS45LTEuOTkgMkwyIDE4YzAgMS4xLjkgMiAyIDJoMTZjMS4xIDAgMi0uOSAyLTJWNmMwLTEuMS0uOS0yLTItMnptLTUgMTRIN3YtMmg4djJ6bTMtNEg3di0yaDEwdjJ6bTAtNEg3Vjh2MmgxMXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="请君开店">
+                </div>
+                <span class="function-text">我要开店</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDIwdi02aDR2Nmg0di04aDNMMTIgMyAyIDIyaDN2LTh6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="首页">
+            </div>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="电商购物">
+            </div>
+            <span>电商购物</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="本地生活">
+            </div>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="会员中心">
+            </div>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="个人中心">
+            </div>
+            <span>个人中心</span>
+        </a>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>活动设置 - 积分商城</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --light-gray: #f8f9fa;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding-bottom: 120px;
+        }
+
+        /* 活动类型选择区样式 */
+        .activity-tabs {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .tab-list {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .tab-item {
+            padding: 10px 20px;
+            border-radius: 20px;
+            background: var(--light-gray);
+            color: var(--secondary-color);
+            border: none;
+            font-size: 14px;
+            white-space: nowrap;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-item.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* 活动配置区样式 */
+        .config-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+
+        .config-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .mode-select {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .mode-option {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid var(--light-gray);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .mode-option.active {
+            border-color: var(--primary-color);
+            background: rgba(0, 123, 255, 0.05);
+        }
+
+        .mode-option i {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-text {
+            font-size: 12px;
+            color: var(--secondary-color);
+            margin-top: 4px;
+        }
+
+        /* 已配置活动展示区样式 */
+        .active-list {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .list-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .activity-card {
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .activity-type {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .activity-status {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        .status-active {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .status-inactive {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .activity-detail {
+            font-size: 14px;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+
+        .activity-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .edit-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .delete-btn {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .push-btn {
+            background: var(--success-color);
+            color: white;
+        }
+
+        /* 底部提示区样式 */
+        .tips-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: var(--secondary-color);
+        }
+
+        .tip-item i {
+            font-size: 14px;
+            color: var(--warning-color);
+        }
+
+        /* 弹窗样式 */
+        .modal-content {
+            border-radius: 12px;
+        }
+
+        .modal-header {
+            border-bottom: none;
+            padding: 20px 20px 0;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            border-top: none;
+            padding: 0 20px 20px;
+        }
+
+        .confirm-text {
+            font-size: 14px;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+
+        /* 商品列表样式 */
+        .product-list {
+            max-height: 500px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+        }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--light-gray);
+            background: white;
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .product-price {
+            font-size: 12px;
+            color: var(--secondary-color);
+        }
+
+        .product-config {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .product-search {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .product-search input {
+            padding-left: 40px;
+            border-radius: 20px;
+        }
+
+        .product-search i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary-color);
+        }
+
+        .product-tags {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .product-tag {
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: var(--light-gray);
+            color: var(--secondary-color);
+            font-size: 12px;
+        }
+
+        .selected-products {
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--light-gray);
+            border-radius: 8px;
+        }
+
+        .selected-product {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .selected-product:last-child {
+            margin-bottom: 0;
+        }
+
+        .selected-product .product-info {
+            flex: 1;
+        }
+
+        .selected-product .product-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .remove-product {
+            color: var(--danger-color);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .push-product {
+            color: var(--success-color);
+            cursor: pointer;
+            padding: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 活动类型选择区 -->
+    <div class="activity-tabs">
+        <div class="tab-list">
+            <button class="tab-item active" data-tab="points">
+                <span>🎁</span>
+                <span>积分活动</span>
+            </button>
+            <button class="tab-item" data-tab="discount">
+                <span>💰</span>
+                <span>现金折扣</span>
+            </button>
+            <button class="tab-item" data-tab="newUser">
+                <span>🆕</span>
+                <span>新客进店奖励</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 活动配置区 -->
+    <div class="config-section">
+        <div class="config-title">积分活动配置</div>
+        <div class="mode-select">
+            <div class="mode-option active" data-mode="global">
+                <i class="bi bi-globe"></i>
+                <div>全场统一</div>
+            </div>
+            <div class="mode-option" data-mode="single">
+                <i class="bi bi-box"></i>
+                <div>单商品设置</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">积分兑换规则</label>
+            <div class="input-group">
+                <input type="number" class="form-control" value="5">
+                <span class="input-group-text">积分 =</span>
+                <input type="number" class="form-control" value="1">
+                <span class="input-group-text">元</span>
+            </div>
+            <div class="form-text">设置积分与现金的兑换比例</div>
+        </div>
+
+        <div class="form-group">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="allowOverlay">
+                <label class="form-check-label" for="allowOverlay">
+                    允许积分与优惠叠加使用
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">积分抵扣有效期</label>
+            <div class="input-group">
+                <input type="date" class="form-control">
+                <span class="input-group-text">至</span>
+                <input type="date" class="form-control">
+            </div>
+            <div class="form-text">选填，不设置则永久有效</div>
+        </div>
+
+        <!-- 商品选择区域 -->
+        <div class="product-search">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control" placeholder="搜索商品名称">
+        </div>
+
+        <div class="product-list">
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">双人火锅套餐A</div>
+                    <div class="product-price">原价：¥128.00</div>
+                    <div class="product-tags">
+                        <span class="product-tag">火锅</span>
+                        <span class="product-tag">套餐</span>
+                    </div>
+                </div>
+                <div class="product-config">
+                    <div class="input-group" style="width: 300px;">
+                        <input type="number" class="form-control" placeholder="现金">
+                        <span class="input-group-text">元</span>
+                        <span class="input-group-text">+</span>
+                        <input type="number" class="form-control" placeholder="积分">
+                        <span class="input-group-text">积分</span>
+                    </div>
+                    <button class="btn btn-outline-primary btn-sm">选择</button>
+                </div>
+            </div>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">四人火锅套餐B</div>
+                    <div class="product-price">原价：¥238.00</div>
+                    <div class="product-tags">
+                        <span class="product-tag">火锅</span>
+                        <span class="product-tag">套餐</span>
+                    </div>
+                </div>
+                <div class="product-config">
+                    <div class="input-group" style="width: 300px;">
+                        <input type="number" class="form-control" placeholder="现金">
+                        <span class="input-group-text">元</span>
+                        <span class="input-group-text">+</span>
+                        <input type="number" class="form-control" placeholder="积分">
+                        <span class="input-group-text">积分</span>
+                    </div>
+                    <button class="btn btn-outline-primary btn-sm">选择</button>
+                </div>
+            </div>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">单人小火锅套餐</div>
+                    <div class="product-price">原价：¥88.00</div>
+                    <div class="product-tags">
+                        <span class="product-tag">火锅</span>
+                        <span class="product-tag">套餐</span>
+                    </div>
+                </div>
+                <div class="product-config">
+                    <div class="input-group" style="width: 300px;">
+                        <input type="number" class="form-control" placeholder="现金">
+                        <span class="input-group-text">元</span>
+                        <span class="input-group-text">+</span>
+                        <input type="number" class="form-control" placeholder="积分">
+                        <span class="input-group-text">积分</span>
+                    </div>
+                    <button class="btn btn-outline-primary btn-sm">选择</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="selected-products">
+            <div class="selected-product">
+                <div class="product-info">
+                    <div class="product-name">双人火锅套餐A</div>
+                    <div class="product-price">可用：¥80 + 100积分</div>
+                </div>
+                <div class="product-actions">
+                    <i class="bi bi-arrow-up-circle push-product" title="推送首页"></i>
+                    <i class="bi bi-x-circle remove-product" title="移除"></i>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary w-100">保存配置</button>
+    </div>
+
+    <!-- 已配置活动展示区 -->
+    <div class="active-list">
+        <div class="list-title">已配置活动</div>
+        
+        <!-- 积分活动卡片 -->
+        <div class="activity-card">
+            <div class="activity-header">
+                <div class="activity-type">
+                    <span>🎁</span>
+                    <span>积分活动</span>
+                </div>
+                <span class="activity-status status-active">启用中</span>
+            </div>
+            <div class="activity-detail">
+                全场商品可用积分抵扣，5积分=1元，可与优惠叠加使用
+            </div>
+            <div class="activity-actions">
+                <button class="action-btn edit-btn">编辑</button>
+                <button class="action-btn delete-btn">删除</button>
+                <button class="action-btn push-btn">推送首页</button>
+            </div>
+        </div>
+
+        <!-- 现金折扣卡片 -->
+        <div class="activity-card">
+            <div class="activity-header">
+                <div class="activity-type">
+                    <span>💰</span>
+                    <span>现金折扣</span>
+                </div>
+                <span class="activity-status status-active">启用中</span>
+            </div>
+            <div class="activity-detail">
+                满100减20，限时活动：2024.03.20-2024.04.20
+            </div>
+            <div class="activity-actions">
+                <button class="action-btn edit-btn">编辑</button>
+                <button class="action-btn delete-btn">删除</button>
+                <button class="action-btn push-btn">推送首页</button>
+            </div>
+        </div>
+
+        <!-- 新客奖励卡片 -->
+        <div class="activity-card">
+            <div class="activity-header">
+                <div class="activity-type">
+                    <span>🆕</span>
+                    <span>新客进店奖励</span>
+                </div>
+                <span class="activity-status status-active">启用中</span>
+            </div>
+            <div class="activity-detail">
+                首次进店消费满50元，赠送100积分
+            </div>
+            <div class="activity-actions">
+                <button class="action-btn edit-btn">编辑</button>
+                <button class="action-btn delete-btn">删除</button>
+                <button class="action-btn push-btn">推送首页</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部提示区 -->
+    <div class="tips-section">
+        <div class="tip-item">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>多个活动可同时存在，但需合理设置优先级，避免叠加冲突</span>
+        </div>
+        <div class="tip-item">
+            <i class="bi bi-shield-lock"></i>
+            <span>活动一经启用，用户端将立即可见，建议提前确认好文案与条件</span>
+        </div>
+        <div class="tip-item">
+            <i class="bi bi-clock"></i>
+            <span>可为每类活动设置有效时间与适用商品，避免无效推广</span>
+        </div>
+        <div class="tip-item">
+            <i class="bi bi-graph-up"></i>
+            <span>可在"数据看板"中查看活动效果</span>
+        </div>
+    </div>
+
+    <!-- 切换确认弹窗 -->
+    <div class="modal fade" id="switchConfirmModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">确认切换</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="confirm-text">
+                        当前配置尚未保存，切换将丢失已编辑的内容，是否继续？
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">确认切换</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 删除确认弹窗 -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">确认删除</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="confirm-text">
+                        删除后活动将立即下架，用户将无法继续使用，是否确认删除？
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger">确认删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 存储当前选中的Tab
+        let currentTab = 'points';
+        
+        // 活动配置内容模板
+        const activityContents = {
+            points: `
+                <div class="config-title">积分活动配置</div>
+                
+                <!-- 商品选择区域 -->
+                <div class="product-search">
+                    <i class="bi bi-search"></i>
+                    <input type="text" class="form-control" placeholder="搜索商品名称">
+                </div>
+
+                <div class="product-list">
+                    <div class="product-item">
+                        <div class="product-info">
+                            <div class="product-name">双人火锅套餐A</div>
+                            <div class="product-price">原价：¥128.00</div>
+                            <div class="product-tags">
+                                <span class="product-tag">火锅</span>
+                                <span class="product-tag">套餐</span>
+                            </div>
+                        </div>
+                        <div class="product-config">
+                            <div class="input-group" style="width: 300px;">
+                                <input type="number" class="form-control" placeholder="现金">
+                                <span class="input-group-text">元</span>
+                                <span class="input-group-text">+</span>
+                                <input type="number" class="form-control" placeholder="积分">
+                                <span class="input-group-text">积分</span>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm">选择</button>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <div class="product-info">
+                            <div class="product-name">四人火锅套餐B</div>
+                            <div class="product-price">原价：¥238.00</div>
+                            <div class="product-tags">
+                                <span class="product-tag">火锅</span>
+                                <span class="product-tag">套餐</span>
+                            </div>
+                        </div>
+                        <div class="product-config">
+                            <div class="input-group" style="width: 300px;">
+                                <input type="number" class="form-control" placeholder="现金">
+                                <span class="input-group-text">元</span>
+                                <span class="input-group-text">+</span>
+                                <input type="number" class="form-control" placeholder="积分">
+                                <span class="input-group-text">积分</span>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm">选择</button>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <div class="product-info">
+                            <div class="product-name">单人小火锅套餐</div>
+                            <div class="product-price">原价：¥88.00</div>
+                            <div class="product-tags">
+                                <span class="product-tag">火锅</span>
+                                <span class="product-tag">套餐</span>
+                            </div>
+                        </div>
+                        <div class="product-config">
+                            <div class="input-group" style="width: 300px;">
+                                <input type="number" class="form-control" placeholder="现金">
+                                <span class="input-group-text">元</span>
+                                <span class="input-group-text">+</span>
+                                <input type="number" class="form-control" placeholder="积分">
+                                <span class="input-group-text">积分</span>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm">选择</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="selected-products">
+                    <div class="selected-product">
+                        <div class="product-info">
+                            <div class="product-name">双人火锅套餐A</div>
+                            <div class="product-price">可用：¥80 + 100积分</div>
+                        </div>
+                        <div class="product-actions">
+                            <i class="bi bi-arrow-up-circle push-product" title="推送首页"></i>
+                            <i class="bi bi-x-circle remove-product" title="移除"></i>
+                        </div>
+                    </div>
+                </div>
+            `,
+            discount: `
+                <div class="config-title">现金折扣配置</div>
+                <div class="mode-select">
+                    <div class="mode-option active" data-mode="global">
+                        <i class="bi bi-globe"></i>
+                        <div>全场折扣</div>
+                    </div>
+                    <div class="mode-option" data-mode="single">
+                        <i class="bi bi-box"></i>
+                        <div>单商品折扣</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">折扣类型</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="discountType" id="discountPercent" checked>
+                        <label class="form-check-label" for="discountPercent">
+                            折扣比例
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="discountType" id="discountAmount">
+                        <label class="form-check-label" for="discountAmount">
+                            立减金额
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">折扣值</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" placeholder="例如：9">
+                        <span class="input-group-text">折</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">使用条件</label>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="minAmount">
+                        <label class="form-check-label" for="minAmount">
+                            满减条件
+                        </label>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">满</span>
+                        <input type="number" class="form-control" placeholder="例如：100">
+                        <span class="input-group-text">元</span>
+                    </div>
+                </div>
+
+                <!-- 商品选择区域 -->
+                <div class="product-search">
+                    <i class="bi bi-search"></i>
+                    <input type="text" class="form-control" placeholder="搜索商品名称">
+                </div>
+
+                <div class="product-list">
+                    <div class="product-item">
+                        <div class="product-info">
+                            <div class="product-name">双人火锅套餐A</div>
+                            <div class="product-price">原价：¥128.00</div>
+                            <div class="product-tags">
+                                <span class="product-tag">火锅</span>
+                                <span class="product-tag">套餐</span>
+                            </div>
+                        </div>
+                        <div class="product-config">
+                            <div class="input-group" style="width: 200px;">
+                                <input type="number" class="form-control" placeholder="折扣">
+                                <span class="input-group-text">折</span>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm">选择</button>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <div class="product-info">
+                            <div class="product-name">四人火锅套餐B</div>
+                            <div class="product-price">原价：¥238.00</div>
+                            <div class="product-tags">
+                                <span class="product-tag">火锅</span>
+                                <span class="product-tag">套餐</span>
+                            </div>
+                        </div>
+                        <div class="product-config">
+                            <div class="input-group" style="width: 200px;">
+                                <input type="number" class="form-control" placeholder="折扣">
+                                <span class="input-group-text">折</span>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm">选择</button>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <div class="product-info">
+                            <div class="product-name">单人小火锅套餐</div>
+                            <div class="product-price">原价：¥88.00</div>
+                            <div class="product-tags">
+                                <span class="product-tag">火锅</span>
+                                <span class="product-tag">套餐</span>
+                            </div>
+                        </div>
+                        <div class="product-config">
+                            <div class="input-group" style="width: 200px;">
+                                <input type="number" class="form-control" placeholder="折扣">
+                                <span class="input-group-text">折</span>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm">选择</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="selected-products">
+                    <div class="selected-product">
+                        <div class="product-info">
+                            <div class="product-name">双人火锅套餐A</div>
+                            <div class="product-price">折扣：8.5折</div>
+                        </div>
+                        <i class="bi bi-x-circle remove-product"></i>
+                    </div>
+                </div>
+            `,
+            newUser: `
+                <div class="config-title">新客进店奖励配置</div>
+                <div class="form-group">
+                    <label class="form-label">奖励类型</label>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="rewardType" id="rewardPoints" checked>
+                        <label class="form-check-label" for="rewardPoints">
+                            赠送积分
+                        </label>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="number" class="form-control" placeholder="例如：100">
+                        <span class="input-group-text">积分</span>
+                    </div>
+
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="rewardType" id="rewardCash">
+                        <label class="form-check-label" for="rewardCash">
+                            现金立减
+                        </label>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="number" class="form-control" placeholder="例如：10">
+                        <span class="input-group-text">元</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">使用条件</label>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="minConsumption">
+                        <label class="form-check-label" for="minConsumption">
+                            最低消费
+                        </label>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="number" class="form-control" placeholder="例如：50">
+                        <span class="input-group-text">元</span>
+                    </div>
+                </div>
+            `
+        };
+
+        // Tab切换事件
+        document.querySelectorAll('.tab-item').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const targetTab = this.getAttribute('data-tab');
+                if (targetTab === currentTab) return;
+
+                // 模拟有未保存的更改
+                const hasUnsavedChanges = true;
+                
+                if (hasUnsavedChanges) {
+                    // 显示确认弹窗
+                    const switchModal = new bootstrap.Modal(document.querySelector('#switchConfirmModal'));
+                    switchModal.show();
+                    
+                    // 存储目标Tab
+                    const confirmBtn = document.querySelector('#switchConfirmModal .btn-primary');
+                    confirmBtn.onclick = () => {
+                        switchTab(targetTab);
+                        switchModal.hide();
+                    };
+                } else {
+                    switchTab(targetTab);
+                }
+            });
+        });
+
+        // 切换Tab的实际逻辑
+        function switchTab(tabName) {
+            // 更新当前Tab
+            currentTab = tabName;
+            
+            // 更新Tab样式
+            document.querySelectorAll('.tab-item').forEach(t => {
+                t.classList.remove('active');
+                if (t.getAttribute('data-tab') === tabName) {
+                    t.classList.add('active');
+                }
+            });
+            
+            // 更新配置内容
+            const configSection = document.querySelector('.config-section');
+            configSection.innerHTML = activityContents[tabName] + '<button class="btn btn-primary w-100">保存配置</button>';
+            
+            // 重新绑定模式选择事件
+            document.querySelectorAll('.mode-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.mode-option').forEach(o => o.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 显示/隐藏商品列表
+                    const productList = document.querySelector('.product-list');
+                    const selectedProducts = document.querySelector('.selected-products');
+                    if (this.getAttribute('data-mode') === 'single') {
+                        productList.style.display = 'block';
+                        selectedProducts.style.display = 'block';
+                    } else {
+                        productList.style.display = 'none';
+                        selectedProducts.style.display = 'none';
+                    }
+                });
+            });
+            
+            // 重新绑定保存按钮事件
+            document.querySelector('.config-section .btn-primary').addEventListener('click', function() {
+                console.log('保存配置:', tabName);
+            });
+        }
+
+        // 模式选择事件
+        document.querySelectorAll('.mode-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.mode-option').forEach(o => o.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 显示/隐藏商品列表
+                const productList = document.querySelector('.product-list');
+                const selectedProducts = document.querySelector('.selected-products');
+                if (this.getAttribute('data-mode') === 'single') {
+                    productList.style.display = 'block';
+                    selectedProducts.style.display = 'block';
+                } else {
+                    productList.style.display = 'none';
+                    selectedProducts.style.display = 'none';
+                }
+            });
+        });
+
+        // 商品选择按钮点击事件
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-outline-primary')) {
+                const productItem = e.target.closest('.product-item');
+                const productName = productItem.querySelector('.product-name').textContent;
+                const selectedProducts = document.querySelector('.selected-products');
+                
+                if (currentTab === 'points') {
+                    const cashInput = productItem.querySelector('input[type="number"]:first-child');
+                    const pointsInput = productItem.querySelector('input[type="number"]:last-child');
+                    const cash = cashInput.value;
+                    const points = pointsInput.value;
+                    
+                    if (!cash || !points) {
+                        alert('请输入现金和积分数量');
+                        return;
+                    }
+
+                    const selectedProduct = document.createElement('div');
+                    selectedProduct.className = 'selected-product';
+                    selectedProduct.innerHTML = `
+                        <div class="product-info">
+                            <div class="product-name">${productName}</div>
+                            <div class="product-price">可用：¥${cash} + ${points}积分</div>
+                        </div>
+                        <i class="bi bi-x-circle remove-product"></i>
+                    `;
+                    selectedProducts.appendChild(selectedProduct);
+                    
+                    // 清空输入框
+                    cashInput.value = '';
+                    pointsInput.value = '';
+                } else if (currentTab === 'discount') {
+                    const discountInput = productItem.querySelector('input[type="number"]');
+                    const discount = discountInput.value;
+                    
+                    if (!discount) {
+                        alert('请输入折扣值');
+                        return;
+                    }
+
+                    const selectedProduct = document.createElement('div');
+                    selectedProduct.className = 'selected-product';
+                    selectedProduct.innerHTML = `
+                        <div class="product-info">
+                            <div class="product-name">${productName}</div>
+                            <div class="product-price">折扣：${discount}折</div>
+                        </div>
+                        <i class="bi bi-x-circle remove-product"></i>
+                    `;
+                    selectedProducts.appendChild(selectedProduct);
+                    
+                    // 清空输入框
+                    discountInput.value = '';
+                }
+            }
+        });
+
+        // 移除已选商品
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-product')) {
+                e.target.closest('.selected-product').remove();
+            }
+        });
+
+        // 推送商品到首页
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('push-product')) {
+                const productItem = e.target.closest('.selected-product');
+                const productName = productItem.querySelector('.product-name').textContent;
+                alert(`已将商品"${productName}"推送到首页`);
+            }
+        });
+
+        // 商品搜索
+        document.addEventListener('input', function(e) {
+            if (e.target.matches('.product-search input')) {
+                const searchText = e.target.value.toLowerCase();
+                document.querySelectorAll('.product-item').forEach(item => {
+                    const productName = item.querySelector('.product-name').textContent.toLowerCase();
+                    item.style.display = productName.includes(searchText) ? 'flex' : 'none';
+                });
+            }
+        });
+
+        // 删除按钮点击事件
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const deleteModal = new bootstrap.Modal(document.querySelector('#deleteConfirmModal'));
+                deleteModal.show();
+            });
+        });
+
+        // 编辑按钮点击事件
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 这里添加编辑逻辑
+                console.log('编辑活动');
+            });
+        });
+
+        // 保存配置按钮点击事件
+        document.querySelector('.config-section .btn-primary').addEventListener('click', function() {
+            // 这里添加保存逻辑
+            console.log('保存配置');
+        });
+    </script>
+       <!-- 底部导航栏 -->
+       <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDIwdi02aDR2Nmg0di04aDNMMTIgMyAyIDIyaDN2LTh6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="首页">
+            </div>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="电商购物">
+            </div>
+            <span>电商购物</span>
+        </a>
+        <a href="local.html" class="tab-item active">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM0YTkwZTIiLz48L3N2Zz4=" alt="本地生活">
+            </div>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="会员中心">
+            </div>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="个人中心">
+            </div>
+            <span>个人中心</span>
+        </a>
+    </div>
+</body>
+</html> 

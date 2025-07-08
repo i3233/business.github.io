@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收入明细 - 商家中心</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --light-gray: #f8f9fa;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 0;
+            margin: 0;
+        }
+
+        .page-header {
+            background: white;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .back-button {
+            color: var(--secondary-color);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .summary-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 10px;
+            min-width: 100px;
+            flex: 1;
+            border-right: 1px solid var(--light-gray);
+            white-space: nowrap;
+        }
+
+        .summary-item:last-child {
+            border-right: none;
+        }
+
+        .summary-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: var(--secondary-color);
+        }
+
+        .filter-bar {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .filter-option {
+            padding: 6px 12px;
+            border: 1px solid var(--light-gray);
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .filter-option.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .search-box {
+            margin-top: 10px;
+        }
+
+        .income-list {
+            padding: 15px;
+        }
+
+        .income-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .income-type {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .type-order {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .type-service {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .type-alliance {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .income-amount {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--success-color);
+            text-align: right;
+        }
+
+        .commission-info {
+            font-size: 12px;
+            color: var(--secondary-color);
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .actual-amount {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--success-color);
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .income-info {
+            margin-top: 10px;
+            font-size: 13px;
+            color: var(--secondary-color);
+        }
+
+        .income-info div {
+            margin-bottom: 5px;
+        }
+
+        .copy-button {
+            color: var(--primary-color);
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--secondary-color);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        /* 筛选弹窗样式 */
+        .filter-modal {
+            display: none;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .summary-item {
+                border-right: none;
+                border-bottom: 1px solid var(--light-gray);
+                padding: 10px;
+            }
+
+            .summary-item:last-child {
+                border-bottom: none;
+            }
+
+            .summary-value {
+                font-size: 18px;
+            }
+        }
+
+        /* 底部导航栏 */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #fff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -1px 2px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 10px;
+            padding: 4px 0;
+        }
+
+        .tab-item.active {
+            color: #ff6b6b;
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="page-header">
+        <a href="merchant-home.html" class="back-button">
+            <i class="bi bi-chevron-left"></i>
+            返回
+        </a>
+        <h5 class="text-center mb-0">收入明细</h5>
+    </div>
+
+    <!-- 筛选与搜索 -->
+    <div class="filter-bar">
+        <div class="filter-options">
+            <div class="filter-option active">全部</div>
+            <div class="filter-option">商品订单</div>
+            <div class="filter-option">核销服务</div>
+            <div class="filter-option">联盟分成</div>
+        </div>
+        <div class="filter-options">
+            <div class="filter-option active">今天</div>
+            <div class="filter-option">昨天</div>
+            <div class="filter-option">近7天</div>
+            <div class="filter-option">近30天</div>
+            <div class="filter-option">自定义</div>
+        </div>
+        <div class="search-box">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="搜索订单号">
+                <button class="btn btn-outline-secondary">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 汇总区域 -->
+    <div class="summary-card">
+        <div class="summary-grid">
+            <div class="summary-item">
+                <div class="summary-value">¥1,234.56</div>
+                <div class="summary-label">今日收入</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value">¥12,345.67</div>
+                <div class="summary-label">本月累计</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value">¥123,456.78</div>
+                <div class="summary-label">总收入</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 收入明细列表 -->
+    <div class="income-list">
+        <!-- 收入记录1 -->
+        <div class="income-card" data-bs-toggle="modal" data-bs-target="#incomeDetailModal">
+            <span class="income-type type-order">商品订单收入</span>
+            <div class="income-amount">¥79.20</div>
+            <div class="income-info">
+                <div>入账时间：2024-03-15 14:30</div>
+                <div>订单号：202403150001 <i class="bi bi-clipboard copy-button"></i></div>
+                <div>用户：张*明</div>
+                <div>来源：自营订单</div>
+            </div>
+        </div>
+
+        <!-- 收入记录2 -->
+        <div class="income-card" data-bs-toggle="modal" data-bs-target="#incomeDetailModal">
+            <span class="income-type type-service">核销服务收入</span>
+            <div class="income-amount">¥115.20</div>
+            <div class="income-info">
+                <div>入账时间：2024-03-15 13:20</div>
+                <div>订单号：202403150002 <i class="bi bi-clipboard copy-button"></i></div>
+                <div>用户：李*华</div>
+                <div>来源：自营订单</div>
+            </div>
+        </div>
+
+        <!-- 收入记录3 -->
+        <div class="income-card" data-bs-toggle="modal" data-bs-target="#incomeDetailModal">
+            <span class="income-type type-alliance">联盟分成收入</span>
+            <div class="income-amount">¥61.20</div>
+            <div class="income-info">
+                <div>入账时间：2024-03-15 12:15</div>
+                <div>订单号：202403150003 <i class="bi bi-clipboard copy-button"></i></div>
+                <div>用户：王*芳</div>
+                <div>来源：来自其他门店</div>
+            </div>
+        </div>
+
+        <!-- 收入记录4 -->
+        <div class="income-card" data-bs-toggle="modal" data-bs-target="#incomeDetailModal">
+            <span class="income-type type-order">商品订单收入</span>
+            <div class="income-amount">¥179.10</div>
+            <div class="income-info">
+                <div>入账时间：2024-03-15 11:30</div>
+                <div>订单号：202403150004 <i class="bi bi-clipboard copy-button"></i></div>
+                <div>用户：赵*强</div>
+                <div>来源：自营订单</div>
+            </div>
+        </div>
+
+        <!-- 收入记录5 -->
+        <div class="income-card" data-bs-toggle="modal" data-bs-target="#incomeDetailModal">
+            <span class="income-type type-service">核销服务收入</span>
+            <div class="income-amount">¥142.20</div>
+            <div class="income-info">
+                <div>入账时间：2024-03-15 10:45</div>
+                <div>订单号：202403150005 <i class="bi bi-clipboard copy-button"></i></div>
+                <div>用户：陈*静</div>
+                <div>来源：自营订单</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 收入详情弹窗 -->
+    <div class="modal fade" id="incomeDetailModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">收入详情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="income-type type-order">商品订单收入</span>
+                            <div class="income-amount">¥79.20</div>
+                        </div>
+                    </div>
+                    <div class="income-info">
+                        <div class="mb-2">
+                            <strong>入账时间：</strong>
+                            <span>2024-03-15 14:30</span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>订单号：</strong>
+                            <span>202403150001</span>
+                            <i class="bi bi-clipboard copy-button"></i>
+                        </div>
+                        <div class="mb-2">
+                            <strong>用户：</strong>
+                            <span>张*明</span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>商品信息：</strong>
+                            <div>招牌奶茶 x1</div>
+                            <div>水果茶 x2</div>
+                        </div>
+                        <div class="mb-2">
+                            <strong>收入来源：</strong>
+                            <span>自营订单</span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>结算说明：</strong>
+                            <div>订单金额：¥88.00</div>
+                            <div>平台抽佣：¥8.80（10%）</div>
+                            <div>实际到账：¥79.20</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDIwdi02aDR2Nmg0di04aDNMMTIgMyAyIDIyaDN2LTh6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="首页">
+            </div>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="电商购物">
+            </div>
+            <span>电商购物</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="本地生活">
+            </div>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="会员中心">
+            </div>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="个人中心">
+            </div>
+            <span>个人中心</span>
+        </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 复制订单号
+        document.querySelectorAll('.copy-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const orderNo = this.parentElement.textContent.trim().replace('订单号：', '').trim();
+                navigator.clipboard.writeText(orderNo).then(() => {
+                    alert('订单号已复制');
+                });
+            });
+        });
+
+        // 筛选选项切换
+        document.querySelectorAll('.filter-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.filter-option').forEach(opt => {
+                    opt.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html> 

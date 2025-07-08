@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>佣金提现</title>
+    <style>
+/* 全局样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.5;
+}
+
+/* 顶部标题栏 */
+.header {
+    background: white;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #333;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.header h1 {
+    flex: 1;
+    text-align: center;
+    font-size: 1.2rem;
+    margin-right: 2rem;
+}
+
+/* 可提现金额卡片 */
+.balance-card {
+    background: white;
+    margin: 15px;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.balance-card h2 {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.balance-amount {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.balance-tip {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+/* 提现金额输入区域 */
+.withdraw-input {
+    background: white;
+    margin: 15px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0 10px;
+}
+
+.currency-symbol {
+    color: #333;
+    font-size: 1.2rem;
+    margin-right: 5px;
+}
+
+#withdrawAmount {
+    flex: 1;
+    border: none;
+    padding: 12px 0;
+    font-size: 1.2rem;
+    outline: none;
+}
+
+.withdraw-all-btn {
+    background: none;
+    border: none;
+    color: #4CAF50;
+    padding: 12px;
+    cursor: pointer;
+}
+
+.withdraw-tip {
+    font-size: 0.8rem;
+    color: #999;
+    margin-bottom: 20px;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.submit-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* 账号信息 */
+.account-info {
+    background: white;
+    margin: 15px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.account-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    color: #666;
+}
+
+.account-header i {
+    font-size: 1.2rem;
+    color: #4CAF50;
+}
+
+.account-detail {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.wechat-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.wechat-name {
+    font-size: 0.9rem;
+    color: #333;
+}
+
+/* 提现记录 */
+.withdraw-records {
+    margin: 15px;
+}
+
+.section-title {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.record-list {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.record-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.record-item:last-child {
+    border-bottom: none;
+}
+
+.record-amount {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.record-time {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.record-status {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+}
+
+.record-status.success {
+    color: #4CAF50;
+}
+
+.record-status.pending {
+    color: #FFA500;
+}
+
+.record-status.failed {
+    color: #f44336;
+}
+
+.view-all-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: #f5f5f5;
+    border: none;
+    border-radius: 8px;
+    color: #666;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+/* 常见问题 */
+.faq {
+    margin: 15px;
+}
+
+.faq-item {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.faq-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    cursor: pointer;
+}
+
+.faq-header i:first-child {
+    color: #4CAF50;
+}
+
+.faq-content {
+    padding: 0 15px 15px;
+    font-size: 0.9rem;
+    color: #666;
+    display: none;
+}
+
+.faq-content.active {
+    display: block;
+}
+
+.faq-content p {
+    margin-bottom: 8px;
+}
+
+/* 弹窗样式 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    width: 80%;
+    max-width: 300px;
+}
+
+.modal-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.modal-icon.success {
+    color: #4CAF50;
+}
+
+.modal-icon.error {
+    color: #f44336;
+}
+
+.modal-content h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.modal-content p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.modal-btn {
+    width: 100%;
+    padding: 12px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/* 响应式适配 */
+@media (max-width: 360px) {
+    .balance-amount {
+        font-size: 1.8rem;
+    }
+    
+    .input-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .withdraw-all-btn {
+        border-top: 1px solid #ddd;
+        margin-top: 10px;
+    }
+}
+
+/* 底部导航栏 */
+.tabbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: #fff;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -1px 2px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #666;
+    font-size: 10px;
+    padding: 4px 0;
+}
+
+.tab-item.active {
+    color: #ff6b6b;
+}
+
+.tab-icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tab-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 顶部标题栏 -->
+    <header class="header">
+        <button class="back-btn">
+            <i class="ri-arrow-left-s-line"></i>
+        </button>
+        <h1>佣金提现</h1>
+    </header>
+
+    <!-- 可提现金额卡片 -->
+    <section class="balance-card">
+        <h2>当前可提现金额（元）</h2>
+        <p class="balance-amount">￥1,280.50</p>
+        <p class="balance-tip">提现将到账至您绑定的微信</p>
+    </section>
+
+    <!-- 提现金额输入区域 -->
+    <section class="withdraw-input">
+        <div class="input-group">
+            <span class="currency-symbol">￥</span>
+            <input type="number" id="withdrawAmount" placeholder="请输入提现金额" step="0.01">
+            <button class="withdraw-all-btn">全部提现</button>
+        </div>
+        <p class="withdraw-tip">单次最低提现10元，最多可提现￥1,280.50</p>
+        <button class="submit-btn" disabled>提现</button>
+    </section>
+
+    <!-- 账号信息 -->
+    <section class="account-info">
+        <div class="account-header">
+            <i class="ri-wechat-line"></i>
+            <span>提现至微信账户</span>
+        </div>
+        <div class="account-detail">
+            <img src="https://img1.baidu.com/it/u=3177203332,1299138918&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500" alt="微信头像" class="wechat-avatar">
+            <span class="wechat-name">微信昵称</span>
+        </div>
+    </section>
+
+    <!-- 提现记录 -->
+    <section class="withdraw-records">
+        <h2 class="section-title">最近提现记录</h2>
+        <div class="record-list">
+            <div class="record-item">
+                <div class="record-info">
+                    <p class="record-amount">￥200.00</p>
+                    <p class="record-time">2024-03-15 14:23</p>
+                </div>
+                <div class="record-status success">
+                    <i class="ri-checkbox-circle-line"></i>
+                    <span>已到账</span>
+                </div>
+            </div>
+            <div class="record-item">
+                <div class="record-info">
+                    <p class="record-amount">￥500.00</p>
+                    <p class="record-time">2024-03-14 10:15</p>
+                </div>
+                <div class="record-status pending">
+                    <i class="ri-time-line"></i>
+                    <span>处理中</span>
+                </div>
+            </div>
+            <div class="record-item">
+                <div class="record-info">
+                    <p class="record-amount">￥300.00</p>
+                    <p class="record-time">2024-03-13 16:45</p>
+                </div>
+                <div class="record-status failed">
+                    <i class="ri-close-circle-line"></i>
+                    <span>失败</span>
+                </div>
+            </div>
+        </div>
+        <button class="view-all-btn">查看全部记录</button>
+    </section>
+
+    <!-- 常见问题 -->
+    <section class="faq">
+        <div class="faq-item">
+            <div class="faq-header">
+                <i class="ri-question-line"></i>
+                <span>提现说明</span>
+                <i class="ri-arrow-down-s-line"></i>
+            </div>
+            <div class="faq-content">
+                <p>• 提现到账时间为1-2个工作日</p>
+                <p>• 单笔最低提现10元</p>
+                <p>• 提现失败时将原路退回余额</p>
+                <p>• 请确保微信账号正常可用</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 提现成功弹窗 -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-icon success">
+                <i class="ri-checkbox-circle-line"></i>
+            </div>
+            <h3>提现申请已提交</h3>
+            <p>预计1-2个工作日内到账</p>
+            <button class="modal-btn">确定</button>
+        </div>
+    </div>
+
+    <!-- 错误提示弹窗 -->
+    <div class="modal" id="errorModal">
+        <div class="modal-content">
+            <div class="modal-icon error">
+                <i class="ri-error-warning-line"></i>
+            </div>
+            <h3>提现失败</h3>
+            <p class="error-message">余额不足</p>
+            <button class="modal-btn">确定</button>
+        </div>
+    </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 获取DOM元素
+    const withdrawInput = document.getElementById('withdrawAmount');
+    const withdrawAllBtn = document.querySelector('.withdraw-all-btn');
+    const submitBtn = document.querySelector('.submit-btn');
+    const successModal = document.getElementById('successModal');
+    const errorModal = document.getElementById('errorModal');
+    const faqHeader = document.querySelector('.faq-header');
+    const faqContent = document.querySelector('.faq-content');
+    const backBtn = document.querySelector('.back-btn');
+
+    // 最大可提现金额
+    const maxWithdrawAmount = 1280.50;
+    // 最小提现金额
+    const minWithdrawAmount = 10;
+
+    // 返回按钮点击事件
+    backBtn.addEventListener('click', function() {
+        window.history.back();
+    });
+
+    // 全部提现按钮点击事件
+    withdrawAllBtn.addEventListener('click', function() {
+        withdrawInput.value = maxWithdrawAmount.toFixed(2);
+        validateInput();
+    });
+
+    // 输入框值变化时验证
+    withdrawInput.addEventListener('input', validateInput);
+
+    // 验证输入金额
+    function validateInput() {
+        const amount = parseFloat(withdrawInput.value);
+        
+        if (isNaN(amount) || amount < minWithdrawAmount || amount > maxWithdrawAmount) {
+            submitBtn.disabled = true;
+        } else {
+            submitBtn.disabled = false;
+        }
+    }
+
+    // 提现按钮点击事件
+    submitBtn.addEventListener('click', function() {
+        const amount = parseFloat(withdrawInput.value);
+        
+        if (amount < minWithdrawAmount) {
+            showError('提现金额不能小于' + minWithdrawAmount + '元');
+            return;
+        }
+        
+        if (amount > maxWithdrawAmount) {
+            showError('提现金额不能大于可提现金额');
+            return;
+        }
+
+        // 模拟提现请求
+        simulateWithdraw(amount);
+    });
+
+    // 模拟提现请求
+    function simulateWithdraw(amount) {
+        // 这里应该是实际的提现API请求
+        // 模拟成功情况
+        showSuccess();
+    }
+
+    // 显示成功弹窗
+    function showSuccess() {
+        successModal.classList.add('active');
+    }
+
+    // 显示错误弹窗
+    function showError(message) {
+        const errorMessage = errorModal.querySelector('.error-message');
+        errorMessage.textContent = message;
+        errorModal.classList.add('active');
+    }
+
+    // 关闭弹窗
+    document.querySelectorAll('.modal-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            successModal.classList.remove('active');
+            errorModal.classList.remove('active');
+        });
+    });
+
+    // FAQ折叠面板
+    faqHeader.addEventListener('click', function() {
+        faqContent.classList.toggle('active');
+        const arrow = faqHeader.querySelector('.ri-arrow-down-s-line');
+        arrow.style.transform = faqContent.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0)';
+    });
+
+    // 点击弹窗背景关闭弹窗
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+    });
+});
+    </script>
+
+    <!-- 底部导航栏 -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDIwdi02aDR2Nmg0di04aDNMMTIgMyAyIDIyaDN2LTh6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="首页">
+            </div>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="电商购物">
+            </div>
+            <span>电商购物</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="本地生活">
+            </div>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="会员中心">
+            </div>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="个人中心">
+            </div>
+            <span>个人中心</span>
+        </a>
+    </div>
+</body>
+</html> 

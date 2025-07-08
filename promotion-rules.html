@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>平台规则说明</title>
+    <style>
+/* 全局样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.5;
+    padding-bottom: 80px; /* 为底部按钮留出空间 */
+}
+
+/* 顶部导航栏 */
+.header {
+    background: white;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #333;
+    cursor: pointer;
+    padding: 5px;
+    margin-right: 10px;
+}
+
+.title {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* 规则容器 */
+.rules-container {
+    padding: 15px;
+}
+
+/* 规则区块 */
+.rule-section {
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.rule-header {
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.rule-header:hover {
+    background-color: #f9f9f9;
+}
+
+.rule-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rule-title i {
+    font-size: 1.5rem;
+    color: #4CAF50;
+}
+
+.rule-title h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.arrow-icon {
+    font-size: 1.2rem;
+    color: #666;
+    transition: transform 0.3s ease;
+}
+
+.rule-section.active .arrow-icon {
+    transform: rotate(180deg);
+}
+
+/* 规则内容 */
+.rule-content {
+    padding: 0 15px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.rule-section.active .rule-content {
+    padding: 15px;
+    max-height: 2000px; /* 足够大的值以容纳内容 */
+}
+
+.rule-subsection {
+    margin-bottom: 20px;
+}
+
+.rule-subsection:last-child {
+    margin-bottom: 0;
+}
+
+.rule-subsection h3 {
+    font-size: 1rem;
+    color: #4CAF50;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.rule-subsection ul {
+    list-style: none;
+    padding-left: 15px;
+}
+
+.rule-subsection li {
+    position: relative;
+    padding-left: 15px;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: #666;
+}
+
+.rule-subsection li:last-child {
+    margin-bottom: 0;
+}
+
+.rule-subsection li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #4CAF50;
+}
+
+/* 底部按钮 */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    padding: 15px;
+    display: flex;
+    gap: 15px;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.contact-btn,
+.faq-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.contact-btn {
+    background: #4CAF50;
+    color: white;
+}
+
+.faq-btn {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.contact-btn:hover {
+    background: #43A047;
+}
+
+.faq-btn:hover {
+    background: #e0e0e0;
+}
+
+/* 响应式适配 */
+@media (max-width: 360px) {
+    .rules-container {
+        padding: 10px;
+    }
+
+    .rule-header {
+        padding: 12px;
+    }
+
+    .rule-title i {
+        font-size: 1.3rem;
+    }
+
+    .rule-title h2 {
+        font-size: 1rem;
+    }
+
+    .rule-subsection h3 {
+        font-size: 0.95rem;
+    }
+
+    .rule-subsection li {
+        font-size: 0.9rem;
+    }
+
+    .contact-btn,
+    .faq-btn {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+}
+
+/* 底部导航栏 */
+.tabbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: #fff;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -1px 2px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #666;
+    font-size: 10px;
+    padding: 4px 0;
+}
+
+.tab-item.active {
+    color: #ff6b6b;
+}
+
+.tab-icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tab-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <button class="back-btn">
+            <i class="ri-arrow-left-s-line"></i>
+        </button>
+        <h1 class="title">平台规则说明</h1>
+    </header>
+
+    <!-- 规则内容 -->
+    <main class="rules-container">
+        <!-- 积分规则 -->
+        <section class="rule-section">
+            <div class="rule-header" data-section="points">
+                <div class="rule-title">
+                    <i class="ri-coins-line"></i>
+                    <h2>积分规则</h2>
+                </div>
+                <i class="ri-arrow-down-s-line arrow-icon"></i>
+            </div>
+            <div class="rule-content">
+                <div class="rule-subsection">
+                    <h3>获取方式</h3>
+                    <ul>
+                        <li>注册成功赠送 100 积分</li>
+                        <li>每次在平台任意商家消费现金，按比例返积分</li>
+                        <li>比例：每消费 5 元现金返 1 积分（向下取整，无四舍五入）</li>
+                        <li>例如：支付 80 元现金，即得 16 积分</li>
+                        <li>使用积分抵扣部分金额的订单也会返积分（仅现金部分计算）</li>
+                        <li>活动期间可能有额外积分赠送，以具体活动规则为准</li>
+                    </ul>
+                </div>
+                <div class="rule-subsection">
+                    <h3>使用规则</h3>
+                    <ul>
+                        <li>积分等值于现金：1 积分 = 1 元</li>
+                        <li>可用于参与商家指定商品的积分抵扣</li>
+                        <li>部分商品不支持使用积分（由商家配置）</li>
+                        <li>每笔订单可使用积分部分不超过商品标价</li>
+                        <li>积分不可提现、不可转赠、不可兑换实物</li>
+                    </ul>
+                </div>
+                <div class="rule-subsection">
+                    <h3>有效期说明</h3>
+                    <ul>
+                        <li>积分自获得之日起 30天内有效</li>
+                        <li>到期未使用积分将自动清零，无法恢复</li>
+                        <li>用户可在【积分记录】中查看获取与使用明细</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 商家规则 -->
+        <section class="rule-section">
+            <div class="rule-header" data-section="merchant">
+                <div class="rule-title">
+                    <i class="ri-store-2-line"></i>
+                    <h2>商家规则</h2>
+                </div>
+                <i class="ri-arrow-down-s-line arrow-icon"></i>
+            </div>
+            <div class="rule-content">
+                <div class="rule-subsection">
+                    <h3>入驻流程</h3>
+                    <ul>
+                        <li>提交入驻申请资料</li>
+                        <li>平台审核通过后开通商家后台</li>
+                        <li>可通过后台上传商品、配置营销活动、查看订单等</li>
+                    </ul>
+                </div>
+                <div class="rule-subsection">
+                    <h3>积分活动配置</h3>
+                    <ul>
+                        <li>商家可配置哪些商品允许使用积分抵扣</li>
+                        <li>可设置"最高可使用积分"或"积分+现金"组合方案</li>
+                        <li>无论线上或线下消费，用户都会获得平台积分</li>
+                        <li>线下消费需用户扫码商家专属二维码，完成绑定与消费记录</li>
+                    </ul>
+                </div>
+                <div class="rule-subsection">
+                    <h3>分成说明</h3>
+                    <ul>
+                        <li>商家粉丝若在异业商家消费，原绑定商家可获得平台分成</li>
+                        <li>分成比例以平台统一政策为准</li>
+                        <li>分成自动结算至商家账户，无需手动申请</li>
+                    </ul>
+                </div>
+                <div class="rule-subsection">
+                    <h3>数据与评价管理</h3>
+                    <ul>
+                        <li>商家可在后台查看销售数据、订单记录、粉丝数量</li>
+                        <li>用户评价不可自行删除，商家可发起申诉</li>
+                        <li>平台保留处理恶意行为、违规商品的权利</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 推广员规则 -->
+        <section class="rule-section">
+            <div class="rule-header" data-section="promoter">
+                <div class="rule-title">
+                    <i class="ri-user-star-line"></i>
+                    <h2>推广员规则</h2>
+                </div>
+                <i class="ri-arrow-down-s-line arrow-icon"></i>
+            </div>
+            <div class="rule-content">
+                <div class="rule-subsection">
+                    <h3>成为推广员</h3>
+                    <ul>
+                        <li>用户可在平台内提交推广员申请</li>
+                        <li>平台审核后成为正式推广员</li>
+                        <li>审核通过后可生成专属推广二维码，邀请商户入驻</li>
+                    </ul>
+                </div>
+                <div class="rule-subsection">
+                    <h3>收益规则</h3>
+                    <ul>
+                        <li>成功推广商家入驻后，推广员与该商家形成绑定关系</li>
+                        <li>被绑定商家的用户若产生消费（线上或线下），推广员可获得分成</li>
+                        <li>分成按照平台标准比例结算到推广员账户</li>
+                        <li>所有收益可在"佣金提现"页面申请提现，首次提现需绑定微信身份</li>
+                    </ul>
+                </div>
+                <div class="rule-subsection">
+                    <h3>提现规则</h3>
+                    <ul>
+                        <li>满 10 元可申请提现</li>
+                        <li>提现仅支持微信提现，预计 1~2 个工作日到账</li>
+                        <li>平台可能对提现行为进行风控核查，确保数据真实</li>
+                    </ul>
+                </div>
+                <div class="rule-subsection">
+                    <h3>行为规范</h3>
+                    <ul>
+                        <li>不得以虚假信息诱导商户入驻</li>
+                        <li>不得使用作弊方式刷单、制造假粉</li>
+                        <li>如发现违规行为，平台有权封禁推广员身份并取消佣金</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部按钮 -->
+    <footer class="footer">
+        <button class="contact-btn">
+            <i class="ri-customer-service-2-line"></i>
+            联系客服
+        </button>
+        <button class="faq-btn">
+            <i class="ri-question-line"></i>
+            常见问题
+        </button>
+    </footer>
+
+    <!-- 底部导航栏 -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDIwdi02aDR2Nmg0di04aDNMMTIgMyAyIDIyaDN2LTh6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="首页">
+            </div>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="电商购物">
+            </div>
+            <span>电商购物</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="本地生活">
+            </div>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="会员中心">
+            </div>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="个人中心">
+            </div>
+            <span>个人中心</span>
+        </a>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 获取所有规则区块
+        const ruleSections = document.querySelectorAll('.rule-section');
+        
+        // 为每个规则区块添加点击事件
+        ruleSections.forEach(section => {
+            const header = section.querySelector('.rule-header');
+            header.addEventListener('click', () => {
+                // 切换当前区块的激活状态
+                section.classList.toggle('active');
+                
+                // 关闭其他区块
+                ruleSections.forEach(otherSection => {
+                    if (otherSection !== section && otherSection.classList.contains('active')) {
+                        otherSection.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        // 默认展开第一个区块
+        ruleSections[0].classList.add('active');
+
+        // 返回按钮事件
+        const backBtn = document.querySelector('.back-btn');
+        backBtn.addEventListener('click', () => {
+            window.history.back();
+        });
+
+        // 联系客服按钮事件
+        const contactBtn = document.querySelector('.contact-btn');
+        contactBtn.addEventListener('click', () => {
+            // 这里可以添加打开客服聊天窗口的逻辑
+            alert('正在连接客服...');
+        });
+
+        // 常见问题按钮事件
+        const faqBtn = document.querySelector('.faq-btn');
+        faqBtn.addEventListener('click', () => {
+            // 这里可以添加跳转到FAQ页面的逻辑
+            alert('正在跳转到常见问题页面...');
+        });
+    });
+    </script>
+</body>
+</html> 

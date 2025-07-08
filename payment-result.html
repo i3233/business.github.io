@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>支付结果 - 本地生活小程序</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+            padding-bottom: 70px;
+        }
+
+        /* Payment Status */
+        .status-section {
+            background: white;
+            padding: 30px 15px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .status-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .status-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .status-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Order Summary */
+        .order-section {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 14px;
+            color: #666;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-label {
+            color: #999;
+        }
+
+        .order-value {
+            color: #333;
+        }
+
+        .order-number {
+            font-family: monospace;
+        }
+
+        .product-name {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .points-return {
+            color: #ff6b6b;
+        }
+
+        /* User Reminders */
+        .reminder-section {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .reminder-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .reminder-title::before {
+            content: "!";
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background: #ff6b6b;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 16px;
+            font-size: 12px;
+        }
+
+        .reminder-content {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .reminder-item {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .reminder-item::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #ff6b6b;
+        }
+
+        /* Action Buttons */
+        .action-section {
+            padding: 15px;
+        }
+
+        .action-button {
+            width: 100%;
+            height: 44px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 22px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .primary-button {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .secondary-button {
+            background: white;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+
+        /* TabBar */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: white;
+            display: flex;
+            border-top: 1px solid #eee;
+            z-index: 100;
+        }
+
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .tab-item.active {
+            color: #ff6b6b;
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Payment Status -->
+        <div class="status-section">
+            <div class="status-icon" style="background-image: url('https://cdn-icons-png.flaticon.com/512/190/190411.png')"></div>
+            <div class="status-title">支付成功</div>
+            <div class="status-subtitle">您的订单已创建成功，请前往门店核销</div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="order-section">
+            <div class="order-item">
+                <span class="order-label">订单编号</span>
+                <span class="order-value order-number">2024031512345678</span>
+            </div>
+            <div class="order-item">
+                <span class="order-label">商品名称</span>
+                <span class="order-value product-name">婴儿奶瓶套装 防胀气奶瓶 宽口径玻璃奶瓶</span>
+            </div>
+            <div class="order-item">
+                <span class="order-label">商家名称</span>
+                <span class="order-value">母婴旗舰店</span>
+            </div>
+            <div class="order-item">
+                <span class="order-label">支付时间</span>
+                <span class="order-value">2024-03-15 14:30:25</span>
+            </div>
+            <div class="order-item">
+                <span class="order-label">支付金额</span>
+                <span class="order-value">¥80</span>
+            </div>
+            <div class="order-item">
+                <span class="order-label">支付积分</span>
+                <span class="order-value">20积分</span>
+            </div>
+            <div class="order-item">
+                <span class="order-label">返还积分</span>
+                <span class="order-value points-return">支付成功后，将返还 16 积分，使用有效期 7 天</span>
+            </div>
+        </div>
+
+        <!-- User Reminders -->
+        <div class="reminder-section">
+            <div class="reminder-title">温馨提示</div>
+            <div class="reminder-content">
+                <div class="reminder-item">
+                    请在【商家营业时间】内，前往门店出示核销码
+                </div>
+                <div class="reminder-item">
+                    积分将在核销成功后返还至积分账户
+                </div>
+                <div class="reminder-item">
+                    订单有效期：24小时内未核销将自动关闭
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-section">
+            <button class="action-button primary-button" id="goToVerify">去核销</button>
+            <button class="action-button secondary-button">返回首页</button>
+        </div>
+    </div>
+
+    <!-- TabBar -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDIwdi02aDR2Nmg0di04aDNMMTIgMyAyIDIyaDN2LTh6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="首页">
+            </div>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="电商购物">
+            </div>
+            <span>电商购物</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="本地生活">
+            </div>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="会员中心">
+            </div>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="个人中心">
+            </div>
+            <span>个人中心</span>
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 去核销按钮点击事件
+            const goToVerifyButton = document.getElementById('goToVerify');
+            goToVerifyButton.addEventListener('click', () => {
+                window.location.href = 'order-detail.html';
+            });
+        });
+    </script>
+</body>
+</html> 

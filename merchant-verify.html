@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>核销订单 - 积分商城</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --light-gray: #f8f9fa;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding-bottom: 60px;
+        }
+
+        /* 顶部状态区样式 */
+        .status-header {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .merchant-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .merchant-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .status-open {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .status-closed {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .alert-bar {
+            margin-top: 10px;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* 扫码核销区样式 */
+        .scan-section {
+            background: white;
+            padding: 30px 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .scan-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 60px;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            cursor: pointer;
+        }
+
+        .scan-button i {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        .scan-text {
+            font-size: 14px;
+        }
+
+        /* 手动核销区样式 */
+        .manual-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .search-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex: 1;
+        }
+
+        /* 历史记录区样式 */
+        .history-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .filter-btn {
+            padding: 6px 15px;
+            border-radius: 15px;
+            background: var(--light-gray);
+            color: var(--secondary-color);
+            border: none;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .order-card {
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .order-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            margin-right: 10px;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .order-info {
+            flex: 1;
+        }
+
+        .order-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 20px;
+        }
+
+        .order-details {
+            font-size: 14px;
+            color: var(--secondary-color);
+        }
+
+        .order-amount {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* 辅助说明区样式 */
+        .help-section {
+            padding: 20px;
+            font-size: 12px;
+            color: var(--secondary-color);
+            line-height: 1.6;
+        }
+
+        .help-item {
+            margin-bottom: 8px;
+        }
+
+        /* 弹窗样式 */
+        .modal-content {
+            border-radius: 12px;
+        }
+
+        .modal-header {
+            border-bottom: none;
+            padding: 20px 20px 0;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            border-top: none;
+            padding: 0 20px 20px;
+        }
+
+        .order-detail-item {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .order-detail-label {
+            color: var(--secondary-color);
+        }
+
+        .order-detail-value {
+            font-weight: 500;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--secondary-color);
+        }
+
+        .empty-state i {
+            font-size: 40px;
+            margin-bottom: 10px;
+            color: #ddd;
+        }
+
+        /* 底部导航栏 */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #fff;
+            display: flex;
+            box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+        }
+
+        .tab-item.active {
+            color: #ff6b6b;
+        }
+
+        .tab-item:hover {
+            color: #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部状态区 -->
+    <div class="status-header">
+        <div class="merchant-name">川味小火锅（人民广场店）</div>
+        <div class="merchant-status status-open">营业中</div>
+        <div class="alert alert-danger alert-bar d-none">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            网络连接异常，请检查网络设置
+        </div>
+    </div>
+
+    <!-- 扫码核销区 -->
+    <div class="scan-section">
+        <div class="scan-button">
+            <i class="bi bi-upc-scan"></i>
+            <span class="scan-text">扫码核销</span>
+        </div>
+        <div class="text-muted">支持二维码、条形码</div>
+    </div>
+
+    <!-- 手动核销区 -->
+    <div class="manual-section">
+        <div class="search-input-group">
+            <input type="text" class="form-control search-input" placeholder="输入用户订单编号或手机号">
+            <button class="btn btn-primary">查询</button>
+        </div>
+    </div>
+
+    <!-- 历史记录区 -->
+    <div class="history-section">
+        <div class="filter-bar">
+            <button class="filter-btn active">今日</button>
+            <button class="filter-btn">本周</button>
+            <button class="filter-btn">自定义</button>
+            <button class="filter-btn">全部</button>
+            <button class="filter-btn">已核销</button>
+            <button class="filter-btn">已退款</button>
+        </div>
+
+        <!-- 订单列表 -->
+        <div class="order-list">
+            <!-- 订单卡片示例 -->
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="user-avatar">
+                        <i class="bi bi-person"></i>
+                    </div>
+                    <div class="order-info">
+                        <div class="fw-bold">张**</div>
+                        <div class="text-muted small">2024-03-20 14:30</div>
+                    </div>
+                </div>
+                <div class="order-details">
+                    <div>双人套餐A</div>
+                    <div class="order-amount">¥128 + 20积分</div>
+                </div>
+                <div class="order-status">✅</div>
+            </div>
+
+            <!-- 空状态 -->
+            <div class="empty-state d-none">
+                <i class="bi bi-inbox"></i>
+                <div>暂无订单核销记录～</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 辅助说明区 -->
+    <div class="help-section">
+        <div class="help-item">核销后订单不可撤销，请确认客户已完成线下消费。</div>
+        <div class="help-item">如遇订单异常，请联系平台客服处理。</div>
+        <div class="help-item">积分发放在用户成功支付后自动完成。</div>
+    </div>
+
+    <!-- 核销确认弹窗 -->
+    <div class="modal fade" id="verifyModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">确认核销</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="order-detail-item">
+                        <span class="order-detail-label">用户昵称</span>
+                        <span class="order-detail-value">张**</span>
+                    </div>
+                    <div class="order-detail-item">
+                        <span class="order-detail-label">订单号</span>
+                        <span class="order-detail-value">20240320****1234</span>
+                    </div>
+                    <div class="order-detail-item">
+                        <span class="order-detail-label">消费金额</span>
+                        <span class="order-detail-value">¥128 + 20积分</span>
+                    </div>
+                    <div class="order-detail-item">
+                        <span class="order-detail-label">商品名称</span>
+                        <span class="order-detail-value">双人套餐A</span>
+                    </div>
+                    <div class="order-detail-item">
+                        <span class="order-detail-label">下单时间</span>
+                        <span class="order-detail-value">2024-03-20 14:30</span>
+                    </div>
+                    <div class="order-detail-item">
+                        <span class="order-detail-label">订单状态</span>
+                        <span class="order-detail-value text-warning">待核销</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">确认核销</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 核销成功弹窗 -->
+    <div class="modal fade" id="successModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <i class="bi bi-check-circle text-success" style="font-size: 48px;"></i>
+                    <h5 class="mt-3">核销成功</h5>
+                    <p class="text-muted mb-0">核销时间：2024-03-20 15:30</p>
+                    <p class="text-muted">今日累计核销：25单</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabbar -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span>商城</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>我的</span>
+        </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 扫码按钮点击事件
+        document.querySelector('.scan-button').addEventListener('click', function() {
+            // 模拟扫码成功，显示核销确认弹窗
+            const verifyModal = new bootstrap.Modal(document.querySelector('#verifyModal'));
+            verifyModal.show();
+        });
+
+        // 筛选按钮点击事件
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // 查询按钮点击事件
+        document.querySelector('.search-input-group .btn').addEventListener('click', function() {
+            const input = document.querySelector('.search-input');
+            if (input.value.trim()) {
+                // 模拟查询成功，显示核销确认弹窗
+                const verifyModal = new bootstrap.Modal(document.querySelector('#verifyModal'));
+                verifyModal.show();
+            }
+        });
+
+        // 确认核销按钮点击事件
+        document.querySelector('#verifyModal .btn-primary').addEventListener('click', function() {
+            // 关闭核销确认弹窗
+            bootstrap.Modal.getInstance(document.querySelector('#verifyModal')).hide();
+            // 显示核销成功弹窗
+            const successModal = new bootstrap.Modal(document.querySelector('#successModal'));
+            successModal.show();
+            
+            // 3秒后自动关闭成功弹窗
+            setTimeout(() => {
+                successModal.hide();
+            }, 3000);
+        });
+
+        // 添加扫码按钮点击效果
+        const scanButton = document.querySelector('.scan-button');
+        scanButton.addEventListener('mousedown', function() {
+            this.style.transform = 'scale(0.95)';
+        });
+        scanButton.addEventListener('mouseup', function() {
+            this.style.transform = 'scale(1)';
+        });
+        scanButton.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+        });
+    </script>
+</body>
+</html> 

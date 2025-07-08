@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>免费试 - 优兑生活</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f5f5;
+            padding-bottom: 70px;
+        }
+
+        /* 顶部导航栏样式 */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 44px;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .back-button {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .back-button::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-top: 2px solid #333;
+            border-left: 2px solid #333;
+            transform: rotate(-45deg);
+        }
+
+        .page-title {
+            font-size: 17px;
+            font-weight: 500;
+            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        /* Banner轮播样式 */
+        .banner-container {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .banner-wrapper {
+            display: flex;
+            transition: transform 0.3s ease;
+        }
+
+        .banner-slide {
+            flex: 0 0 100%;
+            height: 180px;
+        }
+
+        .banner-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .banner-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+        }
+
+        .banner-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+        }
+
+        .banner-dot.active {
+            background: #fff;
+        }
+
+        /* 开箱宝箱活动样式 */
+        .treasure-box {
+            margin: 15px;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+
+        .treasure-box img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .my-prizes-btn {
+            position: absolute;
+            right: 15px;
+            bottom: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #ff6b6b;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* 活动按钮样式 */
+        .activity-buttons {
+            margin: 15px;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .activity-buttons::-webkit-scrollbar {
+            display: none;
+        }
+
+        .activity-button {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 15px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .activity-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .activity-icon img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+        }
+
+        .activity-name {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* 平台币进度条样式 */
+        .coins-progress {
+            margin: 15px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .coins-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .coins-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .coins-amount {
+            font-size: 20px;
+            font-weight: 600;
+            color: #ff6b6b;
+        }
+
+        .coins-amount span {
+            font-size: 14px;
+            color: #999;
+            margin-left: 4px;
+        }
+
+        .progress-item {
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #ff6b6b;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-point {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border: 2px solid #ff6b6b;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .progress-point::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: #ff6b6b;
+            border-radius: 50%;
+        }
+
+        .progress-point-label {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .progress-point-value {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #ff6b6b;
+            white-space: nowrap;
+        }
+
+        .pass-cards {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .pass-card {
+            display: flex;
+            align-items: center;
+            background: #fff5f5;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        .pass-card img {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+        }
+
+        .pass-card-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pass-card-name {
+            font-size: 12px;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .pass-card-desc {
+            font-size: 10px;
+            color: #999;
+        }
+
+        /* 奖品浮窗样式 */
+        .prizes-modal {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            z-index: 1000;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .prizes-modal.show {
+            transform: translateY(0);
+        }
+
+        .prizes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .prizes-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .close-prizes {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .prize-list {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .prize-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .prize-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+
+        .prize-info {
+            flex: 1;
+        }
+
+        .prize-name {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .prize-date {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .prize-status {
+            font-size: 14px;
+            color: #ff6b6b;
+        }
+
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* 宝箱任务浮窗样式 */
+        .treasure-modal {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            z-index: 1000;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .treasure-modal.show {
+            transform: translateY(0);
+        }
+
+        .treasure-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .treasure-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .close-treasure {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .today-rewards {
+            background: #fff5f5;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .today-rewards-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+
+        .rewards-list {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .reward-item {
+            flex: 0 0 100px;
+            text-align: center;
+        }
+
+        .reward-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .reward-name {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .tasks-list {
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .task-info {
+            flex: 1;
+        }
+
+        .task-name {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .task-desc {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .task-button {
+            padding: 6px 16px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .task-button.disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* 全部免费试筛选区样式 */
+        .filter-section {
+            margin: 15px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .filter-title-group {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .filter-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .filter-subtitle {
+            font-size: 12px;
+            color: #ff6b6b;
+        }
+
+        .subscription-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toggle-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #ff6b6b;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .filter-dropdown {
+            flex: 1;
+            position: relative;
+        }
+
+        .filter-button {
+            width: 100%;
+            padding: 8px 12px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .filter-button::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid #666;
+            margin-left: 8px;
+        }
+
+        .filter-options {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-top: 4px;
+            z-index: 100;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .filter-options.show {
+            display: block;
+        }
+
+        .filter-option {
+            padding: 10px 12px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .filter-option:hover {
+            background: #f5f5f5;
+        }
+
+        .filter-option.active {
+            color: #ff6b6b;
+            background: #fff5f5;
+        }
+
+        .attribute-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .attribute-filter {
+            padding: 6px 12px;
+            background: #f5f5f5;
+            border-radius: 16px;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .attribute-filter.active {
+            background: #ff6b6b;
+            color: #fff;
+        }
+
+        .attribute-filter-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        /* 商品列表样式 */
+        .product-list {
+            margin: 15px;
+        }
+
+        .product-item {
+            display: flex;
+            background: #fff;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .product-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .product-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-name {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .product-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .product-distance {
+            color: #999;
+        }
+
+        .product-value {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .product-value .highlight {
+            color: #ff6b6b;
+            font-weight: 500;
+        }
+
+        .lottery-button {
+            align-self: flex-end;
+            background: #ff6b6b;
+            color: #fff;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .lottery-button:hover {
+            background: #ff5252;
+        }
+
+        /* 抽奖区域标签页样式 */
+        .trial-tabs {
+            display: flex;
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .trial-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            font-size: 15px;
+            color: #666;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .trial-tab.active {
+            color: #ff6b6b;
+            font-weight: 500;
+        }
+
+        .trial-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 3px;
+            background: #ff6b6b;
+            border-radius: 2px;
+        }
+
+        .trial-content {
+            display: none;
+        }
+
+        .trial-content.active {
+            display: block;
+        }
+
+        /* 我的抽奖列表样式 */
+        .my-trial-list {
+            padding: 15px;
+        }
+
+        .my-trial-item {
+            background: #fff;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 15px;
+            position: relative;
+        }
+
+        .my-trial-item.lost {
+            opacity: 0.6;
+        }
+
+        .my-trial-item.won::after {
+            content: '中奖';
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%) rotate(-15deg);
+            background: #ff6b6b;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(255,107,107,0.3);
+        }
+
+        .my-trial-time {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 8px;
+        }
+
+        .my-trial-name {
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .my-trial-status {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* 商品详情弹窗样式 */
+        .product-modal {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-radius: 20px 20px 0 0;
+            z-index: 1000;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .product-modal.show {
+            transform: translateY(0);
+        }
+
+        .product-modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .product-modal-close {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .product-modal-info {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .product-modal-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .product-modal-basic {
+            flex: 1;
+        }
+
+        .product-modal-name {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .product-modal-shop {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .product-modal-value {
+            font-size: 14px;
+            color: #ff6b6b;
+        }
+
+        .product-modal-content {
+            padding: 20px;
+        }
+
+        .product-modal-section {
+            margin-bottom: 20px;
+        }
+
+        .product-modal-section-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .product-modal-detail {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .product-modal-detail img {
+            width: 100%;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .product-modal-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            background: #fff;
+            position: sticky;
+            bottom: 0;
+        }
+
+        .product-modal-deadline {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .product-modal-deadline .highlight {
+            color: #ff6b6b;
+            font-weight: 500;
+        }
+
+        .product-modal-button {
+            width: 100%;
+            padding: 12px;
+            background: #ff6b6b;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .product-modal-button:hover {
+            background: #ff5252;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="nav-bar">
+        <div class="back-button" onclick="history.back()"></div>
+        <div class="page-title">免费试</div>
+        <div style="width: 24px;"></div>
+    </div>
+
+    <!-- Banner轮播 -->
+    <div class="banner-container">
+        <div class="banner-wrapper">
+            <div class="banner-slide">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNjAwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiPkJhbm5lciAxPC90ZXh0Pjwvc3ZnPg==" alt="Banner 1">
+            </div>
+            <div class="banner-slide">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNjAwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiPkJhbm5lciAyPC90ZXh0Pjwvc3ZnPg==" alt="Banner 2">
+            </div>
+        </div>
+        <div class="banner-dots">
+            <div class="banner-dot active"></div>
+            <div class="banner-dot"></div>
+        </div>
+    </div>
+
+    <!-- 开箱宝箱活动 -->
+    <div class="treasure-box" onclick="showTreasure()">
+        <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'%3E%3Crect width='1200' height='800' fill='%23ff6b6b'/%3E%3Ctext x='600' y='400' font-size='48' text-anchor='middle' fill='%23ffffff' font-family='Microsoft YaHei, sans-serif'%3E开宝箱活动%3C/text%3E%3C/svg%3E" 
+             alt="开宝箱活动">
+        <button class="my-prizes-btn" onclick="showPrizes(event)">我的奖品</button>
+    </div>
+
+    <!-- 抽奖区域标签页 -->
+    <div class="trial-tabs">
+        <div class="trial-tab active" onclick="switchTab('platform')">平台抽奖区</div>
+        <div class="trial-tab" onclick="switchTab('merchant')">商家抽奖区</div>
+        <div class="trial-tab" onclick="switchTab('my')">我的抽奖</div>
+    </div>
+
+    <!-- 平台抽奖区内容 -->
+    <div id="platformContent" class="trial-content active">
+        <div class="product-list">
+            <div class="product-item">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNjAwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiPlByb2R1Y3QgMTwvdGV4dD48L3N2Zz4=" alt="商品1" class="product-image">
+                <div class="product-info">
+                    <div>
+                        <div class="product-name">iPhone 15 Pro Max</div>
+                        <div class="product-value">
+                            <span class="highlight">10</span>个中奖名额，已有<span class="highlight">30</span>人参与抽奖
+                        </div>
+                        <div class="product-value">
+                            价值<span class="highlight">1200元</span>
+                        </div>
+                    </div>
+                    <button class="lottery-button">免费抽</button>
+                </div>
+            </div>
+
+            <div class="product-item">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNjAwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiPlByb2R1Y3QgMjwvdGV4dD48L3N2Zz4=" alt="商品2" class="product-image">
+                <div class="product-info">
+                    <div>
+                        <div class="product-name">AirPods Pro 2</div>
+                        <div class="product-value">
+                            <span class="highlight">15</span>个中奖名额，已有<span class="highlight">45</span>人参与抽奖
+                        </div>
+                        <div class="product-value">
+                            价值<span class="highlight">899元</span>
+                        </div>
+                    </div>
+                    <button class="lottery-button">免费抽</button>
+                </div>
+            </div>
+
+            <div class="product-item">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNjAwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiPlByb2R1Y3QgMzwvdGV4dD48L3N2Zz4=" alt="商品3" class="product-image">
+                <div class="product-info">
+                    <div>
+                        <div class="product-name">iPad Air 5</div>
+                        <div class="product-value">
+                            <span class="highlight">8</span>个中奖名额，已有<span class="highlight">25</span>人参与抽奖
+                        </div>
+                        <div class="product-value">
+                            价值<span class="highlight">799元</span>
+                        </div>
+                    </div>
+                    <button class="lottery-button">免费抽</button>
+                </div>
+            </div>
+
+            <div class="product-item">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNjAwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiPlByb2R1Y3QgNDwvdGV4dD48L3N2Zz4=" alt="商品4" class="product-image">
+                <div class="product-info">
+                    <div>
+                        <div class="product-name">MacBook Air M2</div>
+                        <div class="product-value">
+                            <span class="highlight">5</span>个中奖名额，已有<span class="highlight">20</span>人参与抽奖
+                        </div>
+                        <div class="product-value">
+                            价值<span class="highlight">1599元</span>
+                        </div>
+                    </div>
+                    <button class="lottery-button">免费抽</button>
+                </div>
+            </div>
+
+            <div class="product-item">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNjAwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiPlByb2R1Y3QgNTwvdGV4dD48L3N2Zz4=" alt="商品5" class="product-image">
+                <div class="product-info">
+                    <div>
+                        <div class="product-name">Apple Watch Series 9</div>
+                        <div class="product-value">
+                            <span class="highlight">12</span>个中奖名额，已有<span class="highlight">35</span>人参与抽奖
+                        </div>
+                        <div class="product-value">
+                            价值<span class="highlight">999元</span>
+                        </div>
+                    </div>
+                    <button class="lottery-button">免费抽</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 商家抽奖区内容 -->
+    <div id="merchantContent" class="trial-content">
+        <div class="product-list">
+            <div class="product-item">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNjAwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiPlByb2R1Y3QgMTwvdGV4dD48L3N2Zz4=" alt="商品1" class="product-image">
+                <div class="product-info">
+                    <div>
+                        <div class="product-name">星巴克咖啡券</div>
+                        <div class="product-value">
+                            <span class="highlight">50</span>个中奖名额，已有<span class="highlight">120</span>人参与抽奖
+                        </div>
+                        <div class="product-value">
+                            价值<span class="highlight">35元</span>
+                        </div>
+                    </div>
+                    <button class="lottery-button">免费抽</button>
+                </div>
+            </div>
+
+            <div class="product-item">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNjAwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiPlByb2R1Y3QgMjwvdGV4dD48L3N2Zz4=" alt="商品2" class="product-image">
+                <div class="product-info">
+                    <div>
+                        <div class="product-name">必胜客双人套餐</div>
+                        <div class="product-value">
+                            <span class="highlight">15</span>个中奖名额，已有<span class="highlight">40</span>人参与抽奖
+                        </div>
+                        <div class="product-value">
+                            价值<span class="highlight">168元</span>
+                        </div>
+                    </div>
+                    <button class="lottery-button">免费抽</button>
+                </div>
+            </div>
+
+            <div class="product-item">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNjAwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiPlByb2R1Y3QgMzwvdGV4dD48L3N2Zz4=" alt="商品3" class="product-image">
+                <div class="product-info">
+                    <div>
+                        <div class="product-name">奈雪的茶饮品券</div>
+                        <div class="product-value">
+                            <span class="highlight">100</span>个中奖名额，已有<span class="highlight">250</span>人参与抽奖
+                        </div>
+                        <div class="product-value">
+                            价值<span class="highlight">28元</span>
+                        </div>
+                    </div>
+                    <button class="lottery-button">免费抽</button>
+                </div>
+            </div>
+
+            <div class="product-item">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNjAwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiPlByb2R1Y3QgNDwvdGV4dD48L3N2Zz4=" alt="商品4" class="product-image">
+                <div class="product-info">
+                    <div>
+                        <div class="product-name">海底捞双人套餐</div>
+                        <div class="product-value">
+                            <span class="highlight">10</span>个中奖名额，已有<span class="highlight">35</span>人参与抽奖
+                        </div>
+                        <div class="product-value">
+                            价值<span class="highlight">198元</span>
+                        </div>
+                    </div>
+                    <button class="lottery-button">免费抽</button>
+                </div>
+            </div>
+
+            <div class="product-item">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNjAwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiPlByb2R1Y3QgNTwvdGV4dD48L3N2Zz4=" alt="商品5" class="product-image">
+                <div class="product-info">
+                    <div>
+                        <div class="product-name">喜茶新品体验券</div>
+                        <div class="product-value">
+                            <span class="highlight">80</span>个中奖名额，已有<span class="highlight">180</span>人参与抽奖
+                        </div>
+                        <div class="product-value">
+                            价值<span class="highlight">32元</span>
+                        </div>
+                    </div>
+                    <button class="lottery-button">免费抽</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 我的抽奖内容 -->
+    <div id="myContent" class="trial-content">
+        <div class="my-trial-list">
+            <div class="my-trial-item won">
+                <div class="my-trial-time">2024-03-20 15:30</div>
+                <div class="my-trial-name">iPhone 15 Pro Max 抽奖</div>
+                <div class="my-trial-status">恭喜您获得 iPhone 15 Pro Max 一台！</div>
+            </div>
+            <div class="my-trial-item lost">
+                <div class="my-trial-time">2024-03-19 10:15</div>
+                <div class="my-trial-name">AirPods Pro 抽奖</div>
+                <div class="my-trial-status">很遗憾，未中奖</div>
+            </div>
+            <div class="my-trial-item won">
+                <div class="my-trial-time">2024-03-18 14:20</div>
+                <div class="my-trial-name">iPad Air 抽奖</div>
+                <div class="my-trial-status">恭喜您获得 iPad Air 一台！</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 奖品浮窗 -->
+    <div class="modal-backdrop" onclick="hidePrizes()"></div>
+    <div class="prizes-modal">
+        <div class="prizes-header">
+            <h3 class="prizes-title">我的奖品</h3>
+            <button class="close-prizes" onclick="hidePrizes()">&times;</button>
+        </div>
+        <div class="prize-list">
+            <div class="prize-item">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNjAwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiPlByaXplIDE8L3RleHQ+PC9zdmc+" alt="奖品1" class="prize-image">
+                <div class="prize-info">
+                    <div class="prize-name">免费试吃券</div>
+                    <div class="prize-date">2024-03-20 获得</div>
+                </div>
+                <div class="prize-status">待使用</div>
+            </div>
+            <div class="prize-item">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNjAwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiPlByaXplIDI8L3RleHQ+PC9zdmc+" alt="奖品2" class="prize-image">
+                <div class="prize-info">
+                    <div class="prize-name">20元无门槛券</div>
+                    <div class="prize-date">2024-03-19 获得</div>
+                </div>
+                <div class="prize-status">已使用</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 宝箱任务浮窗 -->
+    <div class="modal-backdrop" onclick="hideTreasure()"></div>
+    <div class="treasure-modal">
+        <div class="treasure-header">
+            <h3 class="treasure-title">每日宝箱</h3>
+            <button class="close-treasure" onclick="hideTreasure()">&times;</button>
+        </div>
+        <div class="today-rewards">
+            <div class="today-rewards-title">今日可领取宝箱</div>
+            <div class="rewards-list">
+                <div class="reward-item">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjZmY2YjZiIi8+PHRleHQgeD0iNjAwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNmZmZmZmYiPuaVsOaNruW9ouWPsDwvdGV4dD48L3N2Zz4=" alt="宝箱1" class="reward-image">
+                    <div class="reward-name">免费试吃券</div>
+                </div>
+                <div class="reward-item">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjZmY2YjZiIi8+PHRleHQgeD0iNjAwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNmZmZmZmYiPuaVsOaNruW9ouWPsDwvdGV4dD48L3N2Zz4=" alt="宝箱2" class="reward-image">
+                    <div class="reward-name">20元无门槛券</div>
+                </div>
+                <div class="reward-item">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjZmY2YjZiIi8+PHRleHQgeD0iNjAwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNmZmZmZmYiPuaVsOaNruW9ouWPsDwvdGV4dD48L3N2Zz4=" alt="宝箱3" class="reward-image">
+                    <div class="reward-name">随机免费菜</div>
+                </div>
+            </div>
+        </div>
+        <div class="tasks-list">
+            <div class="task-item">
+                <div class="task-info">
+                    <div class="task-name">每日签到</div>
+                    <div class="task-desc">连续签到7天可获得额外奖励</div>
+                </div>
+                <button class="task-button">领取任务</button>
+            </div>
+            <div class="task-item">
+                <div class="task-info">
+                    <div class="task-name">评论任务</div>
+                    <div class="task-desc">评论任意商品即可获得奖励</div>
+                </div>
+                <button class="task-button">领取任务</button>
+            </div>
+            <div class="task-item">
+                <div class="task-info">
+                    <div class="task-name">分享任务</div>
+                    <div class="task-desc">分享商品给好友即可获得奖励</div>
+                </div>
+                <button class="task-button disabled">已完成</button>
+            </div>
+            <div class="task-item">
+                <div class="task-info">
+                    <div class="task-name">下单任务</div>
+                    <div class="task-desc">完成任意订单即可获得奖励</div>
+                </div>
+                <button class="task-button">领取任务</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 商品详情弹窗 -->
+    <div class="modal-backdrop" onclick="hideProductModal()"></div>
+    <div class="product-modal">
+        <button class="product-modal-close" onclick="hideProductModal()">&times;</button>
+        <div class="product-modal-header">
+            <div class="product-modal-info">
+                <img src="" alt="商品图片" class="product-modal-image" id="modalProductImage">
+                <div class="product-modal-basic">
+                    <div class="product-modal-name" id="modalProductName"></div>
+                    <div class="product-modal-shop" id="modalProductShop"></div>
+                    <div class="product-modal-value" id="modalProductValue"></div>
+                </div>
+            </div>
+        </div>
+        <div class="product-modal-content">
+            <div class="product-modal-section">
+                <div class="product-modal-section-title">商品详情</div>
+                <div class="product-modal-detail" id="modalProductDetail">
+                    <!-- 商品详情内容将通过JavaScript动态插入 -->
+                </div>
+            </div>
+        </div>
+        <div class="product-modal-footer">
+            <div class="product-modal-deadline">
+                抽奖截止时间：<span class="highlight" id="modalProductDeadline"></span>
+            </div>
+            <button class="product-modal-button" onclick="startLottery()">马上抽取</button>
+        </div>
+    </div>
+
+    <script>
+        // Banner轮播
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.banner-slide');
+        const dots = document.querySelectorAll('.banner-dot');
+        const wrapper = document.querySelector('.banner-wrapper');
+
+        function showSlide(index) {
+            wrapper.style.transform = `translateX(-${index * 100}%)`;
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        // 自动轮播
+        setInterval(nextSlide, 3000);
+
+        // 点击指示点切换
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                currentSlide = index;
+                showSlide(currentSlide);
+            });
+        });
+
+        // 奖品浮窗
+        function showPrizes(event) {
+            event.stopPropagation();
+            document.querySelector('.modal-backdrop').style.display = 'block';
+            document.querySelector('.prizes-modal').style.display = 'block';
+            setTimeout(() => {
+                document.querySelector('.prizes-modal').classList.add('show');
+            }, 10);
+        }
+
+        function hidePrizes() {
+            document.querySelector('.prizes-modal').classList.remove('show');
+            setTimeout(() => {
+                document.querySelector('.prizes-modal').style.display = 'none';
+                document.querySelector('.modal-backdrop').style.display = 'none';
+            }, 300);
+        }
+
+        // 宝箱任务浮窗
+        function showTreasure() {
+            document.querySelector('.modal-backdrop').style.display = 'block';
+            document.querySelector('.treasure-modal').style.display = 'block';
+            setTimeout(() => {
+                document.querySelector('.treasure-modal').classList.add('show');
+            }, 10);
+        }
+
+        function hideTreasure() {
+            document.querySelector('.treasure-modal').classList.remove('show');
+            setTimeout(() => {
+                document.querySelector('.treasure-modal').style.display = 'none';
+                document.querySelector('.modal-backdrop').style.display = 'none';
+            }, 300);
+        }
+
+        // 筛选下拉框
+        function toggleFilter(type) {
+            const options = document.getElementById(`${type}-options`);
+            const allOptions = document.querySelectorAll('.filter-options');
+            
+            allOptions.forEach(opt => {
+                if (opt !== options) {
+                    opt.classList.remove('show');
+                }
+            });
+            
+            options.classList.toggle('show');
+        }
+
+        // 点击选项
+        document.querySelectorAll('.filter-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const parent = this.parentElement;
+                const button = parent.previousElementSibling;
+                button.textContent = this.textContent;
+                parent.classList.remove('show');
+                
+                // 更新选中状态
+                parent.querySelectorAll('.filter-option').forEach(opt => {
+                    opt.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+
+        // 属性筛选
+        function toggleAttribute(element) {
+            element.classList.toggle('active');
+        }
+
+        // 点击其他地方关闭下拉框
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.filter-dropdown')) {
+                document.querySelectorAll('.filter-options').forEach(opt => {
+                    opt.classList.remove('show');
+                });
+            }
+        });
+
+        // 订阅开关
+        function toggleSubscription(checkbox) {
+            if (checkbox.checked) {
+                // 订阅逻辑
+                console.log('已订阅免费试');
+            } else {
+                // 取消订阅逻辑
+                console.log('已取消订阅免费试');
+            }
+        }
+
+        // 标签页切换功能
+        function switchTab(tabId) {
+            // 更新标签页状态
+            document.querySelectorAll('.trial-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 更新内容区域显示
+            document.querySelectorAll('.trial-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabId + 'Content').classList.add('active');
+        }
+
+        // 商品详情弹窗功能
+        function showProductModal(product) {
+            // 设置商品基本信息
+            document.getElementById('modalProductImage').src = product.image;
+            document.getElementById('modalProductName').textContent = product.name;
+            document.getElementById('modalProductShop').textContent = product.shop;
+            document.getElementById('modalProductValue').textContent = `价值${product.value}元`;
+            document.getElementById('modalProductDeadline').textContent = product.deadline;
+            
+            // 设置商品详情
+            const detailHtml = `
+                <p>${product.description}</p>
+                <img src="${product.detailImage}" alt="商品详情图">
+                <p>${product.features}</p>
+            `;
+            document.getElementById('modalProductDetail').innerHTML = detailHtml;
+
+            // 显示弹窗
+            document.querySelector('.modal-backdrop').style.display = 'block';
+            document.querySelector('.product-modal').style.display = 'block';
+            setTimeout(() => {
+                document.querySelector('.product-modal').classList.add('show');
+            }, 10);
+        }
+
+        function hideProductModal() {
+            document.querySelector('.product-modal').classList.remove('show');
+            setTimeout(() => {
+                document.querySelector('.product-modal').style.display = 'none';
+                document.querySelector('.modal-backdrop').style.display = 'none';
+            }, 300);
+        }
+
+        function startLottery() {
+            // 这里添加抽奖逻辑
+            alert('开始抽奖！');
+        }
+
+        // 为所有商品添加点击事件
+        document.querySelectorAll('.product-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const product = {
+                    image: this.querySelector('.product-image').src,
+                    name: this.querySelector('.product-name').textContent,
+                    shop: '官方旗舰店', // 这里可以根据实际情况设置
+                    value: this.querySelector('.product-value .highlight').textContent,
+                    deadline: '2024-03-31 23:59:59', // 这里可以根据实际情况设置
+                    description: '这是一段商品描述，详细介绍商品的特点和优势。',
+                    detailImage: this.querySelector('.product-image').src,
+                    features: '商品特点：\n1. 品质保证\n2. 正品保障\n3. 售后无忧'
+                };
+                showProductModal(product);
+            });
+        });
+    </script>
+</body>
+</html> 

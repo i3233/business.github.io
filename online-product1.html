@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>本地生活产品 - 优兑生活</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding-bottom: 50px;
+        }
+
+        /* 产品图片区域 */
+        .product-image-section {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: #fff;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .price-info {
+            position: absolute;
+            left: 15px;
+            bottom: 15px;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+
+        .current-price {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .original-price {
+            font-size: 14px;
+            text-decoration: line-through;
+            opacity: 0.8;
+            margin-left: 8px;
+        }
+
+        .sales-info {
+            position: absolute;
+            right: 15px;
+            bottom: 15px;
+            color: #fff;
+            font-size: 14px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+
+        .favorite-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .favorite-button::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDIxLjM1bC0xLjQ1LTEuMzJDNS40IDE1LjM2IDIgMTIuMjggMiA4LjUgMiA1LjQyIDQuNDIgMyA3LjUgM2MxLjc0IDAgMy40MS44MSA0LjUgMi4wOUMxMy4wOSAzLjgxIDE0Ljc2IDMgMTYuNSAzIDE5LjU4IDMgMjIgNS40MiAyMiA4LjVjMCAzLjc4LTMuNCA2Ljg2LTguNTUgMTEuNTRMMTIgMjEuMzV6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+') no-repeat center;
+            background-size: contain;
+        }
+
+        .favorite-button.active::before {
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDIxLjM1bC0xLjQ1LTEuMzJDNS40IDE1LjM2IDIgMTIuMjggMiA4LjUgMiA1LjQyIDQuNDIgMyA3LjUgM2MxLjc0IDAgMy40MS44MSA0LjUgMi4wOUMxMy4wOSAzLjgxIDE0Ljc2IDMgMTYuNSAzIDE5LjU4IDMgMjIgNS40MiAyMiA4LjVjMCAzLjc4LTMuNCA2Ljg2LTguNTUgMTEuNTRMMTIgMjEuMzV6IiBmaWxsPSIjZmY0ZDRmIi8+PC9zdmc+');
+        }
+
+        /* 底部导航栏 */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #fff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -1px 2px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 10px;
+            padding: 4px 0;
+        }
+
+        .tab-item.active {
+            color: #4a90e2;
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* 商品详情区域 */
+        .product-detail {
+            background: #fff;
+            margin: 10px;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+        }
+
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: #4a90e2;
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+
+        .info-item {
+            display: flex;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .info-label {
+            width: 80px;
+            color: #999;
+        }
+
+        .info-value {
+            flex: 1;
+            color: #333;
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .tag {
+            background: #f5f5f5;
+            color: #666;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .service-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .service-item::before {
+            content: '✓';
+            color: #4a90e2;
+            margin-right: 4px;
+            font-weight: bold;
+        }
+
+        /* 功能区 */
+        .function-area {
+            background: #fff;
+            margin: 10px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .function-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .function-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .function-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .buy-button {
+            background: #ff4d4f;
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(255, 77, 79, 0.3);
+        }
+
+        .buy-button::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==') no-repeat center;
+            background-size: contain;
+        }
+
+        /* 支付弹窗样式 */
+        .payment-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .payment-modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 320px;
+            text-align: center;
+            position: relative;
+        }
+
+        .payment-modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .payment-modal-message {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .payment-modal-button {
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .payment-modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .payment-modal-close::before,
+        .payment-modal-close::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 2px;
+            background-color: #999;
+            transform: rotate(45deg);
+        }
+
+        .payment-modal-close::after {
+            transform: rotate(-45deg);
+        }
+    </style>
+</head>
+<body>
+    <!-- 产品图片区域 -->
+    <div class="product-image-section">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgMThjLTQuNDEgMC04LTMuNTktOC04czMuNTktOCA4LTggOCAzLjU5IDggOC0zLjU5IDgtOCA4eiIgZmlsbD0iI2Y1ZjVmNSIvPjwvc3ZnPg==" alt="产品图片" class="product-image">
+        <button class="favorite-button" onclick="this.classList.toggle('active')"></button>
+        <div class="price-info">
+            <span class="current-price">300+60U</span>
+            <span class="original-price">360</span>
+        </div>
+        <div class="sales-info">已售100</div>
+    </div>
+
+    <!-- 商品详情区域 -->
+    <div class="product-detail">
+        <!-- 基本信息 -->
+        <div class="detail-section">
+            <div class="section-title">基本信息</div>
+            <div class="info-item">
+                <span class="info-label">商品名称</span>
+                <span class="info-value">高级SPA按摩套餐</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">适用人群</span>
+                <span class="info-value">成人</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">使用时长</span>
+                <span class="info-value">90分钟</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">预约方式</span>
+                <span class="info-value">需提前24小时预约</span>
+            </div>
+        </div>
+
+        <!-- 服务内容 -->
+        <div class="detail-section">
+            <div class="section-title">服务内容</div>
+            <div class="description">
+                本套餐包含全身精油按摩、肩颈重点护理、足部按摩等多项服务。采用进口精油，由专业技师提供一对一服务，帮助缓解疲劳，改善睡眠质量。
+            </div>
+            <div class="tag-list">
+                <span class="tag">全身按摩</span>
+                <span class="tag">精油护理</span>
+                <span class="tag">肩颈护理</span>
+                <span class="tag">足部按摩</span>
+                <span class="tag">一对一服务</span>
+            </div>
+        </div>
+
+        <!-- 使用须知 -->
+        <div class="detail-section">
+            <div class="section-title">使用须知</div>
+            <div class="info-item">
+                <span class="info-label">有效期</span>
+                <span class="info-value">购买后90天内有效</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">使用时间</span>
+                <span class="info-value">周一至周日 10:00-22:00</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">预约电话</span>
+                <span class="info-value">400-888-8888</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">使用规则</span>
+                <span class="info-value">需提前24小时预约，不可与其他优惠同享</span>
+            </div>
+        </div>
+
+        <!-- 服务保障 -->
+        <div class="detail-section">
+            <div class="section-title">服务保障</div>
+            <div class="service-list">
+                <div class="service-item">专业技师</div>
+                <div class="service-item">进口精油</div>
+                <div class="service-item">一对一服务</div>
+                <div class="service-item">免费停车</div>
+                <div class="service-item">免费WiFi</div>
+                <div class="service-item">免费茶水</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 功能区 -->
+    <div class="function-area">
+        <a href="#" class="function-button">
+            <div class="function-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDIxLjM1bC0xLjQ1LTEuMzJDNS40IDE1LjM2IDIgMTIuMjggMiA4LjUgMiA1LjQyIDQuNDIgMyA3LjUgM2MxLjc0IDAgMy40MS44MSA0LjUgMi4wOUMxMy4wOSAzLjgxIDE0Ljc2IDMgMTYuNSAzIDE5LjU4IDMgMjIgNS40MiAyMiA4LjVjMCAzLjc4LTMuNCA2Ljg2LTguNTUgMTEuNTRMMTIgMjEuMzV6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="收藏">
+            </div>
+            <span>收藏</span>
+        </a>
+        <a href="#" class="function-button">
+            <div class="function-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTE4IDE2LjA4Yy0uNzYgMC0xLjQ0LjMtMS45Ni43N0w4LjkxIDEyLjdjLjA1LS4yMy4wOS0uNDYuMDktLjdzLS4wNC0uNDctLjA5LS43bDcuMDUtNC4xMWMuNTQuNSAxLjI1LjgxIDIuMDQuODEgMS42NiAwIDMtMS4zNCAzLTMtMS4zNC0zLTMtMy0zLTMgMCAuMjQuMDQuNDcuMDkuN0w4LjA0IDkuODFjLS41NC0uNS0xLjI1LS44MS0yLjA0LS44MS0xLjY2IDAtMyAxLjM0LTMgM3MxLjM0IDMgMyAzYy43OSAwIDEuNS0uMzEgMi4wNC0uODFsNy4xMiA0LjE2Yy0uMDUuMjMtLjA4LjQzLS4wOC42NSAwIDEuNjEgMS4zMSAyLjkyIDIuOTIgMi45MiAxLjYxIDAgMi45Mi0xLjMxIDIuOTItMi45MnMtMS4zMS0yLjkyLTIuOTItMi45MnoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="分享赚钱">
+            </div>
+            <span>分享赚钱</span>
+        </a>
+        <button class="buy-button" onclick="showPaymentModal()">立即购买300</button>
+    </div>
+
+    <!-- 支付弹窗 -->
+    <div id="paymentModal" class="payment-modal">
+        <div class="payment-modal-content">
+            <div class="payment-modal-close" onclick="closePaymentModal()"></div>
+            <div class="payment-modal-title">支付确认</div>
+            <div class="payment-modal-message">此处拉起支付套件，支付后跳转</div>
+            <button class="payment-modal-button" onclick="handlePaymentSuccess()">支付成功</button>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDIwdi02aDR2Nmg0di04aDNMMTIgMyAyIDIyaDN2LTh6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="首页">
+            </div>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="电商购物">
+            </div>
+            <span>电商购物</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="本地生活">
+            </div>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="会员中心">
+            </div>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="个人中心">
+            </div>
+            <span>个人中心</span>
+        </a>
+    </div>
+
+    <script>
+        // 支付弹窗功能
+        function showPaymentModal() {
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+        }
+
+        function handlePaymentSuccess() {
+            window.location.href = 'payment-result.html';
+        }
+
+        // 点击弹窗外部关闭弹窗
+        window.onclick = function(event) {
+            if (event.target.classList.contains('payment-modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 

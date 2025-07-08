@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的积分 - 本地生活小程序</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+            padding-bottom: 70px;
+        }
+
+        /* Points Overview */
+        .overview-section {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            padding: 30px 20px;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .points-title {
+            font-size: 14px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .points-amount {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .expiry-notice {
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .rules-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            background: white;
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .filter-button {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            font-size: 12px;
+            color: #666;
+            background: white;
+            cursor: pointer;
+        }
+
+        .filter-button.active {
+            background: #ff6b6b;
+            color: white;
+            border-color: #ff6b6b;
+        }
+
+        /* Points History */
+        .history-section {
+            background: white;
+        }
+
+        .history-item {
+            padding: 15px;
+            border-bottom: 1px solid #f5f5f5;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .history-info {
+            flex: 1;
+        }
+
+        .history-date {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .history-type {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .history-desc {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .history-amount {
+            text-align: right;
+        }
+
+        .amount-value {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .amount-value.positive {
+            color: #ff6b6b;
+        }
+
+        .amount-value.negative {
+            color: #666;
+        }
+
+        .amount-status {
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* Rules Section */
+        .rules-section {
+            background: white;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .rules-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .view-all-rules {
+            font-size: 12px;
+            color: #ff6b6b;
+            text-decoration: none;
+        }
+
+        .rules-list {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .rule-item {
+            margin-bottom: 8px;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .rule-item::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #ff6b6b;
+        }
+
+        /* TabBar */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: white;
+            display: flex;
+            border-top: 1px solid #eee;
+            z-index: 100;
+        }
+
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .tab-item.active {
+            color: #ff6b6b;
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Points Overview -->
+        <div class="overview-section">
+            <div class="points-title">当前可用积分</div>
+            <div class="points-amount">124</div>
+            <div class="expiry-notice">有 16 积分将于 2025-05-15 到期</div>
+            <button class="rules-button">积分规则说明</button>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <button class="filter-button active">全部</button>
+            <button class="filter-button">获得积分</button>
+            <button class="filter-button">使用积分</button>
+            <button class="filter-button">即将过期</button>
+        </div>
+
+        <!-- Points History -->
+        <div class="history-section">
+            <div class="history-item">
+                <div class="history-info">
+                    <div class="history-date">2025-05-10</div>
+                    <div class="history-type">获得积分</div>
+                    <div class="history-desc">在母婴旗舰店消费返还</div>
+                </div>
+                <div class="history-amount">
+                    <div class="amount-value positive">+16</div>
+                    <div class="amount-status">可用</div>
+                </div>
+            </div>
+            <div class="history-item">
+                <div class="history-info">
+                    <div class="history-date">2025-05-09</div>
+                    <div class="history-type">使用积分</div>
+                    <div class="history-desc">订单#202505090001 抵扣</div>
+                </div>
+                <div class="history-amount">
+                    <div class="amount-value negative">-20</div>
+                    <div class="amount-status">已使用</div>
+                </div>
+            </div>
+            <div class="history-item">
+                <div class="history-info">
+                    <div class="history-date">2025-05-08</div>
+                    <div class="history-type">系统赠送</div>
+                    <div class="history-desc">注册赠送积分</div>
+                </div>
+                <div class="history-amount">
+                    <div class="amount-value positive">+100</div>
+                    <div class="amount-status">可用</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rules Section -->
+        <div class="rules-section">
+            <div class="rules-title">
+                <span>积分使用说明</span>
+                <a href="#" class="view-all-rules">查看完整规则 ></a>
+            </div>
+            <div class="rules-list">
+                <div class="rule-item">平台积分可用于抵扣订单金额，使用比例为 5:1（积分:元）</div>
+                <div class="rule-item">积分不可提现，不可转赠，仅限平台内消费使用</div>
+                <div class="rule-item">积分有效期为获得日起 7 天，过期作废</div>
+                <div class="rule-item">支付时优先使用即将过期积分</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TabBar -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDIwdi02aDR2Nmg0di04aDNMMTIgMyAyIDIyaDN2LTh6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="首页">
+            </div>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="电商购物">
+            </div>
+            <span>电商购物</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="本地生活">
+            </div>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="会员中心">
+            </div>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="个人中心">
+            </div>
+            <span>个人中心</span>
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter Buttons
+            const filterButtons = document.querySelectorAll('.filter-button');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    // 这里可以添加筛选逻辑
+                });
+            });
+
+            // Rules Button
+            const rulesButton = document.querySelector('.rules-button');
+            rulesButton.addEventListener('click', () => {
+                // 这里可以添加显示规则详情的逻辑
+                console.log('Show rules details');
+            });
+        });
+    </script>
+</body>
+</html> 

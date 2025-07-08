@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收银台 - 优兑生活</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding-bottom: 50px;
+        }
+
+        /* 顶部导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 44px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .back-button {
+            width: 24px;
+            height: 24px;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTIwIDExSDcuODNsNS41OS01LjU5TDEyIDRsLTggOCA4IDggMS40MS0xLjQxTDcuODMgMTNIMjB2LTJ6IiBmaWxsPSIjMzMzIi8+PC9zdmc+') no-repeat center;
+            background-size: contain;
+            border: none;
+            cursor: pointer;
+        }
+
+        .navbar-title {
+            flex: 1;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* 商品信息区域 */
+        .product-info {
+            margin-top: 54px;
+            background: #fff;
+            padding: 15px;
+            display: flex;
+            gap: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-name {
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .product-spec {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .product-price {
+            font-size: 16px;
+            color: #ff4d4f;
+            font-weight: 500;
+        }
+
+        /* 支付方式区域 */
+        .payment-section {
+            background: #fff;
+            margin-top: 10px;
+            padding: 15px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: #4a90e2;
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+        }
+
+        .payment-option.selected {
+            background-color: #f5f5f5;
+        }
+
+        .payment-option .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+            position: relative;
+        }
+
+        .payment-option.selected .checkbox::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #4a90e2;
+            border-radius: 2px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .payment-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .payment-label {
+            flex: 1;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .payment-amount {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .payment-amount.highlight {
+            color: #ff4d4f;
+            font-weight: 500;
+        }
+
+        /* 积分使用区域 */
+        .points-section {
+            background: #fff;
+            margin-top: 10px;
+            padding: 15px;
+        }
+
+        .points-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .points-input input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .points-input button {
+            padding: 8px 15px;
+            background: #4a90e2;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .points-info {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .points-warning {
+            color: #ff4d4f;
+            margin-top: 5px;
+        }
+
+        /* 底部支付栏 */
+        .payment-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 -1px 2px rgba(0,0,0,0.1);
+        }
+
+        .total-amount {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .total-amount .amount {
+            font-size: 20px;
+            color: #ff4d4f;
+            font-weight: 500;
+        }
+
+        .pay-button {
+            background: #ff4d4f;
+            color: #fff;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* 支付弹窗 */
+        .payment-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .payment-modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 320px;
+            text-align: center;
+            position: relative;
+        }
+
+        .payment-modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .payment-modal-message {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .payment-modal-button {
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .payment-modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .payment-modal-close::before,
+        .payment-modal-close::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 2px;
+            background-color: #999;
+            transform: rotate(45deg);
+        }
+
+        .payment-modal-close::after {
+            transform: rotate(-45deg);
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="navbar">
+        <button class="back-button" onclick="history.back()"></button>
+        <div class="navbar-title">收银台</div>
+    </div>
+
+    <!-- 商品信息区域 -->
+    <div class="product-info">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCI+PHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNjAwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iNDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiPlByb2R1Y3QgSW1hZ2U8L3RleHQ+PC9zdmc+" alt="商品图片" class="product-image">
+        <div class="product-details">
+            <div class="product-name">2024春季新款连衣裙</div>
+            <div class="product-spec">颜色：白色 | 尺码：M</div>
+            <div class="product-price">¥299.00</div>
+        </div>
+    </div>
+
+    <!-- 支付方式区域 -->
+    <div class="payment-section">
+        <div class="section-title">支付方式</div>
+        <div class="payment-option" onclick="togglePayment('balance')">
+            <div class="checkbox"></div>
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="余额" class="payment-icon">
+            <div class="payment-label">余额支付</div>
+            <div class="payment-amount">当前余额：¥<span id="balanceAmount">2,888.88</span></div>
+        </div>
+        <div class="payment-option" onclick="togglePayment('points')">
+            <div class="checkbox"></div>
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="积分" class="payment-icon">
+            <div class="payment-label">积分支付</div>
+            <div class="payment-amount">需支付：<span id="pointsAmount">20</span>积分</div>
+        </div>
+        <div class="payment-option" onclick="togglePayment('cash')">
+            <div class="checkbox"></div>
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="现金" class="payment-icon">
+            <div class="payment-label">现金支付</div>
+            <div class="payment-amount highlight">需支付：¥<span id="cashAmount">80.00</span></div>
+        </div>
+    </div>
+
+    <!-- 积分使用区域 -->
+    <div class="points-section">
+        <div class="section-title">积分使用</div>
+        <div class="points-input">
+            <input type="number" id="pointsInput" placeholder="请输入使用积分" max="20" min="0">
+            <button onclick="updatePoints()">确定</button>
+        </div>
+        <div class="points-info">
+            当前可用积分：<span id="availablePoints">15</span>
+            <div class="points-warning" id="pointsWarning" style="display: none;">
+                积分不足，将使用现金补足差额
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部支付栏 -->
+    <div class="payment-bar">
+        <div class="total-amount">
+            实付金额：<span class="amount" id="totalAmount">¥80.00</span>
+        </div>
+        <button class="pay-button" onclick="showPaymentModal()">立即支付</button>
+    </div>
+
+    <!-- 支付弹窗 -->
+    <div id="paymentModal" class="payment-modal">
+        <div class="payment-modal-content">
+            <div class="payment-modal-close" onclick="closePaymentModal()"></div>
+            <div class="payment-modal-title">支付确认</div>
+            <div class="payment-modal-message">此处拉起支付套件，支付后跳转</div>
+            <button class="payment-modal-button" onclick="handlePaymentSuccess()">支付成功</button>
+        </div>
+    </div>
+
+    <script>
+        // 积分和金额计算
+        const originalPrice = 299;
+        const totalAmount = 100; // 总支付金额
+        const pointsValue = 20; // 最大可用积分
+        let availablePoints = 15; // 用户可用积分
+        let userBalance = 2888.88; // 用户余额
+        let selectedPayments = new Set(['cash']); // 默认选中现金支付
+
+        function togglePayment(type) {
+            const option = event.currentTarget;
+            if (selectedPayments.has(type)) {
+                selectedPayments.delete(type);
+                option.classList.remove('selected');
+            } else {
+                selectedPayments.add(type);
+                option.classList.add('selected');
+            }
+            updatePaymentDisplay();
+        }
+
+        function updatePaymentDisplay() {
+            const pointsInput = document.getElementById('pointsInput');
+            const pointsWarning = document.getElementById('pointsWarning');
+            const cashAmount = document.getElementById('cashAmount');
+            const totalAmountDisplay = document.getElementById('totalAmount');
+            const pointsAmount = document.getElementById('pointsAmount');
+            
+            let points = parseInt(pointsInput.value) || 0;
+            
+            // 限制积分输入范围并显示提示
+            if (points > availablePoints) {
+                alert('超出可用积分范围！当前可用积分为：' + availablePoints);
+                points = availablePoints;
+                pointsInput.value = points;
+            }
+            if (points > pointsValue) {
+                alert('超出最大可用积分范围！最大可用积分为：' + pointsValue);
+                points = pointsValue;
+                pointsInput.value = points;
+            }
+            if (points < 0) {
+                points = 0;
+                pointsInput.value = points;
+            }
+
+            // 计算现金支付金额（总金额 - 积分）
+            const cashAmountValue = totalAmount - points;
+
+            // 更新显示
+            pointsAmount.textContent = points;
+            cashAmount.textContent = cashAmountValue.toFixed(2);
+            totalAmountDisplay.textContent = `¥${cashAmountValue.toFixed(2)}`;
+
+            // 显示积分不足提示
+            if (points < pointsValue) {
+                pointsWarning.style.display = 'block';
+            } else {
+                pointsWarning.style.display = 'none';
+            }
+
+            // 根据选择的支付方式更新支付按钮状态
+            const payButton = document.querySelector('.pay-button');
+            if (selectedPayments.has('balance') && userBalance < cashAmountValue) {
+                payButton.disabled = true;
+                payButton.style.backgroundColor = '#ccc';
+                payButton.textContent = '余额不足';
+            } else {
+                payButton.disabled = false;
+                payButton.style.backgroundColor = '#ff4d4f';
+                payButton.textContent = '立即支付';
+            }
+        }
+
+        // 添加输入框事件监听，实现动态计算
+        document.getElementById('pointsInput').addEventListener('input', function() {
+            updatePaymentDisplay();
+        });
+
+        // 支付弹窗功能
+        function showPaymentModal() {
+            if (selectedPayments.has('balance') && userBalance < totalAmount) {
+                alert('余额不足，请选择其他支付方式');
+                return;
+            }
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+        }
+
+        function handlePaymentSuccess() {
+            if (selectedPayments.has('balance')) {
+                userBalance -= totalAmount;
+                document.getElementById('balanceAmount').textContent = userBalance.toFixed(2);
+            }
+            window.location.href = 'payment-result.html';
+        }
+
+        // 点击弹窗外部关闭弹窗
+        window.onclick = function(event) {
+            if (event.target.classList.contains('payment-modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 默认选中现金支付
+            document.querySelector('.payment-option:nth-child(3)').classList.add('selected');
+            updatePaymentDisplay();
+        });
+    </script>
+</body>
+</html> 

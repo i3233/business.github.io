@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单列表 - 商家中心</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --light-gray: #f8f9fa;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        /* 筛选栏样式 */
+        .filter-bar {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .filter-tag {
+            background: var(--light-gray);
+            border-radius: 15px;
+            padding: 4px 12px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filter-tag i {
+            cursor: pointer;
+        }
+
+        /* 订单列表样式 */
+        .order-list {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .order-card {
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .order-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .order-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .order-status {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: var(--warning-color);
+            color: #000;
+        }
+
+        .status-verified {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .status-completed {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .status-cancelled {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .order-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: var(--light-gray);
+            border-radius: 8px;
+        }
+
+        .order-items {
+            flex: 1;
+        }
+
+        .order-items > div {
+            margin-bottom: 5px;
+        }
+
+        .order-amount {
+            text-align: right;
+            margin-left: 20px;
+            min-width: 120px;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .order-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .order-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                padding: 10px;
+            }
+
+            .order-amount {
+                text-align: left;
+                margin-left: 0;
+                min-width: auto;
+            }
+
+            .order-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .btn-group {
+                width: 100%;
+                display: flex;
+                gap: 10px;
+            }
+
+            .btn-group .btn {
+                flex: 1;
+            }
+        }
+
+        /* 底部导航栏 */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #fff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -1px 2px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 10px;
+            padding: 4px 0;
+        }
+
+        .tab-item.active {
+            color: #ff6b6b;
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <!-- 筛选栏 -->
+    <div class="filter-bar">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <select class="form-select">
+                    <option value="">全部状态</option>
+                    <option value="pending">待支付</option>
+                    <option value="verified">待核销</option>
+                    <option value="completed">已完成</option>
+                    <option value="cancelled">已取消</option>
+                </select>
+            </div>
+            <div class="col-md-8">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="搜索订单号/用户昵称/商品名称">
+                    <button class="btn btn-outline-secondary">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="filter-tags">
+            <div class="filter-tag">
+                待支付 <i class="bi bi-x"></i>
+            </div>
+            <div class="filter-tag">
+                关键词：奶茶 <i class="bi bi-x"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 订单列表 -->
+    <div class="order-list">
+        <!-- 订单卡片1 -->
+        <div class="order-card">
+            <div class="order-header">
+                <div class="order-info">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fw-bold">订单号：202403150001</span>
+                        <span class="order-status status-pending">待支付</span>
+                    </div>
+                    <div class="text-muted">2024-03-15 14:30</div>
+                </div>
+                <div class="order-amount">
+                    <div class="payment-amount">
+                        <span class="cash-amount">¥88.00</span>
+                        <span class="points-amount">+ 200积分</span>
+                    </div>
+                    <div class="text-muted">待支付</div>
+                </div>
+            </div>
+            <div class="order-footer">
+                <div class="user-info">
+                    <img src="https://picsum.photos/40" class="user-avatar" alt="用户头像">
+                    <span>张先生</span>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#orderDetailModal">详情</button>
+                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#cancelOrderModal">撤销订单</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 订单卡片2 -->
+        <div class="order-card">
+            <div class="order-header">
+                <div class="order-info">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fw-bold">订单号：202403150002</span>
+                        <span class="order-status status-verified">待核销</span>
+                    </div>
+                    <div class="text-muted">2024-03-15 13:20</div>
+                </div>
+                <div class="order-amount">
+                    <div class="payment-amount">
+                        <span class="cash-amount">¥128.00</span>
+                        <span class="points-amount">+ 300积分</span>
+                    </div>
+                    <div class="text-success">已支付</div>
+                </div>
+            </div>
+            <div class="order-footer">
+                <div class="user-info">
+                    <img src="https://picsum.photos/41" class="user-avatar" alt="用户头像">
+                    <span>李女士</span>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#orderDetailModal">详情</button>
+                    <button class="btn btn-primary btn-sm">核销</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 订单卡片3 -->
+        <div class="order-card">
+            <div class="order-header">
+                <div class="order-info">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fw-bold">订单号：202403150003</span>
+                        <span class="order-status status-completed">已完成</span>
+                    </div>
+                    <div class="text-muted">2024-03-15 12:15</div>
+                </div>
+                <div class="order-amount">
+                    <div class="payment-amount">
+                        <span class="cash-amount">¥68.00</span>
+                        <span class="points-amount">+ 150积分</span>
+                    </div>
+                    <div class="text-success">已支付</div>
+                </div>
+            </div>
+            <div class="order-footer">
+                <div class="user-info">
+                    <img src="https://picsum.photos/42" class="user-avatar" alt="用户头像">
+                    <span>王先生</span>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#orderDetailModal">详情</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 撤销订单确认弹窗 -->
+    <div class="modal fade" id="cancelOrderModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">确认撤销订单</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>要撤销该订单并通知用户吗？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger">确认撤销</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 订单详情弹窗 -->
+    <div class="modal fade" id="orderDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">订单详情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <strong>订单号：</strong>
+                                <span>202403150001</span>
+                            </div>
+                            <div class="mb-2">
+                                <strong>下单时间：</strong>
+                                <span>2024-03-15 14:30</span>
+                            </div>
+                            <div class="mb-2">
+                                <strong>订单状态：</strong>
+                                <span class="badge bg-warning">待支付</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <strong>用户信息：</strong>
+                                <div class="d-flex align-items-center gap-2">
+                                    <img src="https://picsum.photos/40" class="user-avatar" alt="用户头像">
+                                    <span>张先生</span>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <strong>支付方式：</strong>
+                                <span>微信支付</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive mb-3">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>商品</th>
+                                    <th>单价</th>
+                                    <th>数量</th>
+                                    <th>小计</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img src="https://picsum.photos/50" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" alt="商品图片">
+                                            <span>招牌奶茶</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="payment-amount">
+                                            <span class="cash-amount">¥28.00</span>
+                                            <span class="points-amount">+ 50积分</span>
+                                        </div>
+                                    </td>
+                                    <td>1</td>
+                                    <td>
+                                        <div class="payment-amount">
+                                            <span class="cash-amount">¥28.00</span>
+                                            <span class="points-amount">+ 50积分</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img src="https://picsum.photos/50" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" alt="商品图片">
+                                            <span>水果茶</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="payment-amount">
+                                            <span class="cash-amount">¥30.00</span>
+                                            <span class="points-amount">+ 75积分</span>
+                                        </div>
+                                    </td>
+                                    <td>2</td>
+                                    <td>
+                                        <div class="payment-amount">
+                                            <span class="cash-amount">¥60.00</span>
+                                            <span class="points-amount">+ 150积分</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 offset-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td>商品总额</td>
+                                    <td class="text-end">
+                                        <div class="payment-amount justify-content-end">
+                                            <span class="cash-amount">¥88.00</span>
+                                            <span class="points-amount">+ 200积分</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>优惠金额</td>
+                                    <td class="text-end">
+                                        <div class="payment-amount justify-content-end">
+                                            <span class="cash-amount">-¥0.00</span>
+                                            <span class="points-amount">- 0积分</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>实付金额</td>
+                                    <td class="text-end">
+                                        <div class="payment-amount justify-content-end">
+                                            <span class="cash-amount">¥88.00</span>
+                                            <span class="points-amount">+ 200积分</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelOrderModal">撤销订单</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDIwdi02aDR2Nmg0di04aDNMMTIgMyAyIDIyaDN2LTh6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="首页">
+            </div>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="电商购物">
+            </div>
+            <span>电商购物</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="本地生活">
+            </div>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="会员中心">
+            </div>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="个人中心">
+            </div>
+            <span>个人中心</span>
+        </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 移除筛选标签
+        document.querySelectorAll('.filter-tag i').forEach(icon => {
+            icon.addEventListener('click', function() {
+                this.parentElement.remove();
+            });
+        });
+    </script>
+</body>
+</html> 

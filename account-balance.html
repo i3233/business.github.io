@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账户余额</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.5;
+            padding-bottom: 60px;
+        }
+
+        /* 顶部导航栏 */
+        .header {
+            background: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+            padding: 5px;
+            margin-right: 10px;
+        }
+
+        .title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        /* 余额概览 */
+        .balance-overview {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            padding: 20px 15px;
+            color: white;
+        }
+
+        .total-balance {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .balance-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* 功能模块 */
+        .module-section {
+            background: white;
+            margin: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .module-header {
+            padding: 15px;
+            border-bottom: 1px solid #f5f5f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .module-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .module-more {
+            color: #999;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+
+        .module-content {
+            padding: 15px;
+        }
+
+        /* 门店抽成列表 */
+        .store-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .store-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .store-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .store-info {
+            flex: 1;
+        }
+
+        .store-name {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .store-commission {
+            font-size: 0.9rem;
+            color: #ff6b6b;
+        }
+
+        /* 粉丝抽成列表 */
+        .fan-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .fan-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .fan-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            object-fit: cover;
+        }
+
+        .fan-info {
+            flex: 1;
+        }
+
+        .fan-name {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .fan-commission {
+            font-size: 0.9rem;
+            color: #ff6b6b;
+        }
+
+        /* 分享店铺列表 */
+        .shared-store-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .shared-store-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .shared-store-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .shared-store-info {
+            flex: 1;
+        }
+
+        .shared-store-name {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .shared-store-commission {
+            font-size: 0.9rem;
+            color: #ff6b6b;
+        }
+
+        /* 产品抽佣列表 */
+        .product-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .product-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-name {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .product-commission {
+            font-size: 0.9rem;
+            color: #ff6b6b;
+        }
+
+        /* 底部导航栏 */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 10px;
+            padding: 4px 0;
+        }
+
+        .tab-item.active {
+            color: #ff6b6b;
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* 提现按钮 */
+        .withdraw-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .withdraw-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* 提现弹窗 */
+        .withdraw-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .withdraw-modal.active {
+            display: flex;
+        }
+
+        .withdraw-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 320px;
+            overflow: hidden;
+        }
+
+        .withdraw-header {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #f5f5f5;
+            position: relative;
+        }
+
+        .withdraw-title {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .withdraw-options {
+            padding: 15px;
+        }
+
+        .withdraw-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .withdraw-option:hover {
+            border-color: #ff6b6b;
+        }
+
+        .withdraw-option.selected {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        .option-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .option-icon i {
+            font-size: 24px;
+            color: #666;
+        }
+
+        .option-info {
+            flex: 1;
+        }
+
+        .option-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .option-desc {
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* 提现表单 */
+        .withdraw-form {
+            padding: 15px;
+        }
+
+        .withdraw-modal .withdraw-form {
+            display: none;
+        }
+
+        .withdraw-modal.active .withdraw-form {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-input:focus {
+            border-color: #ff6b6b;
+            outline: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <button class="back-btn">
+            <i class="ri-arrow-left-s-line"></i>
+        </button>
+        <h1 class="title">账户余额</h1>
+    </header>
+
+    <!-- 余额概览 -->
+    <div class="balance-overview">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <div class="total-balance">¥ 2,888.88</div>
+                <div class="balance-label">抽成总额</div>
+            </div>
+            <button class="withdraw-btn">提现</button>
+        </div>
+    </div>
+
+    <!-- 门店抽成 -->
+    <div class="module-section">
+        <div class="module-header">
+            <div class="module-title">门店抽成</div>
+            <a href="promotion-records.html" class="module-more">查看全部</a>
+        </div>
+        <div class="module-content">
+            <div class="store-list">
+                <div class="store-item">
+                    <img src="https://via.placeholder.com/50" alt="门店头像" class="store-avatar">
+                    <div class="store-info">
+                        <div class="store-name">优品生活超市</div>
+                        <div class="store-commission">抽成：¥1,288.00</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 粉丝抽成 -->
+    <div class="module-section">
+        <div class="module-header">
+            <div class="module-title">粉丝抽成</div>
+            <a href="fan-commission.html" class="module-more">查看全部</a>
+        </div>
+        <div class="module-content">
+            <div class="fan-list">
+                <div class="fan-item">
+                    <img src="https://via.placeholder.com/50" alt="粉丝头像" class="fan-avatar">
+                    <div class="fan-info">
+                        <div class="fan-name">张三</div>
+                        <div class="fan-commission">抽成：¥288.00</div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- 分享店铺 
+    <div class="module-section">
+        <div class="module-header">
+            <div class="module-title">分享店铺</div>
+            <a href="#" class="module-more">查看全部</a>
+        </div>
+        <div class="module-content">
+            <div class="shared-store-list">
+                <div class="shared-store-item">
+                    <img src="https://via.placeholder.com/50" alt="店铺头像" class="shared-store-avatar">
+                    <div class="shared-store-info">
+                        <div class="shared-store-name">优品生活超市</div>
+                        <div class="shared-store-commission">佣金：¥588.00</div>
+                    </div>
+                </div>
+ 
+            </div>
+        </div>
+    </div>
+-->
+    <!-- 产品抽佣 -->
+    <div class="module-section">
+        <div class="module-header">
+            <div class="module-title">产品抽佣</div>
+            <a href="product-commission.html" class="module-more">查看全部</a>
+        </div>
+        <div class="module-content">
+            <div class="product-list">
+                <div class="product-item">
+                    <img src="https://via.placeholder.com/50" alt="产品图片" class="product-image">
+                    <div class="product-info">
+                        <div class="product-name">有机蔬菜礼盒</div>
+                        <div class="product-commission">佣金：¥88.00</div>
+                    </div>
+                </div>
+  
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tabbar">
+        <a href="index.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwIDIwdi02aDR2Nmg0di04aDNMMTIgMyAyIDIyaDN2LTh6IiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="首页">
+            </div>
+            <span>首页</span>
+        </a>
+        <a href="shop.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcgMThjLTEuMSAwLTEuOTkuOS0xLjk5IDJzLjg5IDIgMS45OSAyIDItLjkgMi0yLS45LTIgLTEuOTktMnptMTAgMGMtMS4xIDAtMS45OS45LTEuOTkgMnMuODkgMiAxLjk5IDIgMi0uOSAyLTIgLjktMiAxLjk5LTJ6TTcuMTcgMTQuNzVsLjAzLS4xMiA5LjE5LTkuMTkgMi4xMiAyLjEyIDkuMTkgOS4xOS4xMi4xM2MuMDQuMDMuMDcuMDYuMDkuMTEuMDIuMDYuMDIuMTIgMCAuMTgtLjA0LjA2LS4xLjEyLS4xOC4xN0g3LjE3Yy0uMDYgMC0uMTItLjAyLS4xNy0uMDctLjA1LS4wNS0uMDctLjExLS4wNy0uMTdzLjAyLS4xMi4wNy0uMTdjLjA1LS4wNS4xMS0uMDcuMTctLjA3eiIgZmlsbD0iIzY2NiIvPjwvc3ZnPg==" alt="电商购物">
+            </div>
+            <span>电商购物</span>
+        </a>
+        <a href="local.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="本地生活">
+            </div>
+            <span>本地生活</span>
+        </a>
+        <a href="member.html" class="tab-item">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="会员中心">
+            </div>
+            <span>会员中心</span>
+        </a>
+        <a href="profile.html" class="tab-item active">
+            <div class="tab-icon">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MyLjY3IDAgNC44NCAyLjE3IDQuODQgNC44NCAwIDIuNjctMi4xNyA0Ljg0LTQuODQgNC44NC0yLjY3IDAtNC44NC0yLjE3LTQuODQtNC44NCAwLTIuNjcgMi4xNy00Ljg0IDQuODQtNC44NHptMCAxMmM0LjQyIDAgOC4xNy0yLjI4IDkuNTQtNS41NS0yLjY3LTEuOTktNi4wOC0zLjE2LTkuNTQtMy4xNi0zLjQ2IDAtNi44NyAxLjE3LTkuNTQgMy4xNiAxLjM3IDMuMjcgNS4xMiA1LjU1IDkuNTQgNS41NXoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=" alt="个人中心">
+            </div>
+            <span>个人中心</span>
+        </a>
+    </div>
+
+    <!-- 提现弹窗 -->
+    <div class="withdraw-modal" id="withdrawModal">
+        <div class="withdraw-content">
+            <div class="withdraw-header">
+                <button class="close-btn">&times;</button>
+                <div class="withdraw-title">选择提现方式</div>
+            </div>
+            <div class="withdraw-options">
+                <div class="withdraw-option" data-type="wechat">
+                    <div class="option-icon">
+                        <i class="ri-wechat-line"></i>
+                    </div>
+                    <div class="option-info">
+                        <div class="option-title">提现到微信</div>
+                        <div class="option-desc">实时到账，无手续费</div>
+                    </div>
+                </div>
+                <div class="withdraw-option" data-type="bank">
+                    <div class="option-icon">
+                        <i class="ri-bank-card-line"></i>
+                    </div>
+                    <div class="option-info">
+                        <div class="option-title">提现到银行卡</div>
+                        <div class="option-desc">1-3个工作日到账</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 微信提现表单 -->
+    <div class="withdraw-modal" id="wechatForm">
+        <div class="withdraw-content">
+            <div class="withdraw-header">
+                <button class="close-btn">&times;</button>
+                <div class="withdraw-title">提现到微信</div>
+            </div>
+            <div class="withdraw-form">
+                <div class="form-group">
+                    <label class="form-label">提现金额</label>
+                    <input type="number" class="form-input" placeholder="请输入提现金额">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">微信账号</label>
+                    <input type="text" class="form-input" placeholder="请输入微信账号">
+                </div>
+                <button class="submit-btn">确认提现</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 银行卡提现表单 -->
+    <div class="withdraw-modal" id="bankForm">
+        <div class="withdraw-content">
+            <div class="withdraw-header">
+                <button class="close-btn">&times;</button>
+                <div class="withdraw-title">提现到银行卡</div>
+            </div>
+            <div class="withdraw-form">
+                <div class="form-group">
+                    <label class="form-label">提现金额</label>
+                    <input type="number" class="form-input" placeholder="请输入提现金额">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">银行卡号</label>
+                    <input type="text" class="form-input" placeholder="请输入银行卡号">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">开户行</label>
+                    <input type="text" class="form-input" placeholder="请输入开户行">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">持卡人姓名</label>
+                    <input type="text" class="form-input" placeholder="请输入持卡人姓名">
+                </div>
+                <button class="submit-btn">确认提现</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 返回按钮点击事件
+            document.querySelector('.back-btn').addEventListener('click', function() {
+                window.history.back();
+            });
+
+            // 提现按钮点击事件
+            const withdrawBtn = document.querySelector('.withdraw-btn');
+            const withdrawModal = document.getElementById('withdrawModal');
+            const wechatForm = document.getElementById('wechatForm');
+            const bankForm = document.getElementById('bankForm');
+            const closeBtns = document.querySelectorAll('.close-btn');
+            const withdrawOptions = document.querySelectorAll('.withdraw-option');
+
+            // 打开提现方式选择弹窗
+            withdrawBtn.addEventListener('click', function() {
+                withdrawModal.classList.add('active');
+            });
+
+            // 关闭所有弹窗
+            function closeAllModals() {
+                withdrawModal.classList.remove('active');
+                wechatForm.classList.remove('active');
+                bankForm.classList.remove('active');
+            }
+
+            // 关闭按钮点击事件
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', closeAllModals);
+            });
+
+            // 点击弹窗外部关闭
+            [withdrawModal, wechatForm, bankForm].forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeAllModals();
+                    }
+                });
+            });
+
+            // 提现方式选择
+            withdrawOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const type = this.dataset.type;
+                    withdrawModal.classList.remove('active');
+                    
+                    if (type === 'wechat') {
+                        wechatForm.classList.add('active');
+                        wechatForm.querySelector('.withdraw-form').style.display = 'block';
+                    } else if (type === 'bank') {
+                        bankForm.classList.add('active');
+                        bankForm.querySelector('.withdraw-form').style.display = 'block';
+                    }
+                });
+            });
+
+            // 提现表单提交
+            const submitBtns = document.querySelectorAll('.submit-btn');
+            submitBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 这里添加提现逻辑
+                    alert('提现申请已提交，请等待处理');
+                    closeAllModals();
+                });
+            });
+        });
+    </script>
+</body>
+</html> 
